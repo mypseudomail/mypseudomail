@@ -4,112 +4,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GhostBox - Vos colis, votre vie privée</title>
+    <title>MyPseudoMail - Interface</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* --- MÊME DESIGN QUE PRECEDEMMENT --- */
-        :root { var(--primary: #2c3e50; var(--accent: #e74c3c; var(--light: #ecf0f1; }
-        body { font-family: sans-serif; margin: 0; background-color: #ecf0f1; color: #333; }
-        header { background-color: #2c3e50; color: white; padding: 20px; text-align: center; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .form-section { background: white; padding: 30px; border-radius: 10px; margin-top: 20px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;}
-        button { background-color: #e74c3c; color: white; border: none; padding: 12px; width: 100%; cursor: pointer; font-size: 16px; border-radius: 5px;}
-        button:hover { background-color: #c0392b; }
-        h2 { text-align: center; color: #2c3e50; }
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { max-width: 800px; }
+        .card { border: none; border-radius: 15px; }
+        .email-item { cursor: pointer; transition: background 0.2s; border-left: 4px solid transparent; }
+        .email-item:hover { background-color: #f1faff; border-left: 4px solid #0d6efd; }
+        .badge-status { font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>📦 GhostBox</h1>
-    <p>Service de réception anonyme</p>
-</header>
+<div class="container py-5">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="mb-0 text-primary">📨 MyPseudoMail</h3>
+                <small class="text-muted">Système de messagerie temporaire</small>
+            </div>
+            <span id="status-badge" class="badge bg-warning text-dark badge-status">Connexion...</span>
+        </div>
+    </div>
 
-<div class="container">
-    <div class="form-section">
-        <h2>Créer un compte sécurisé</h2>
-        <p>Vos données seront envoyées directement dans votre base de données Firebase.</p>
-        
-        <div id="signupForm">
-            <label>Votre Email</label>
-            <input type="email" id="emailInput" placeholder="ex: pseudo@ghostbox.com" required>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Votre Identité</h5>
+            <p class="mb-2">ID Firebase : <code id="user-id" class="bg-light p-1 rounded">En attente...</code></p>
             
-            <label>Votre vraie adresse postale</label>
-            <input type="text" id="addressInput" placeholder="Adresse complète" required>
+            <hr>
             
-            <button id="submitBtn">S'inscrire maintenant</button>
+            <div class="d-grid gap-2">
+                <button onclick="simulateIncomingEmail()" class="btn btn-dark">
+                    🚀 Simuler la réception d'un email (Test)
+                </button>
+            </div>
+            <small class="text-muted d-block mt-2 text-center">Cliquez pour ajouter un faux message dans la base de données.</small>
+        </div>
+    </div>
+
+    <h5 class="mb-3 ms-1">Boîte de réception</h5>
+    <div id="inbox-list" class="list-group shadow-sm">
+        <div class="list-group-item text-center p-5 text-muted">
+            Chargement des messages...
         </div>
     </div>
 </div>
 
-<script type="module">
-  // Importation des outils nécessaires depuis Google
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
- // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
-  authDomain: "mypseudomail-9d093.firebaseapp.com",
-  projectId: "mypseudomail-9d093",
-  storageBucket: "mypseudomail-9d093.firebasestorage.app",
-  messagingSenderId: "189746859638",
-  appId: "1:189746859638:web:abc519c2a17116a32b9957",
-  measurementId: "G-8QFN8HSTH8"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+<script>
+  // --- 1. CONFIGURATION FIREBASE (VOS CLÉS SONT ICI) ---
   const firebaseConfig = {
-    apiKey: "AIzaSyD-Exemple-De-Cle-A-Remplacer",
-    authDomain: "ton-projet.firebaseapp.com",
-    projectId: "ton-projet",
-    storageBucket: "ton-projet.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456:web:abcdef"
+    apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
+    authDomain: "mypseudomail-9d093.firebaseapp.com",
+    projectId: "mypseudomail-9d093",
+    storageBucket: "mypseudomail-9d093.firebasestorage.app",
+    messagingSenderId: "189746859638",
+    appId: "1:189746859638:web:abc519c2a17116a32b9957",
+    measurementId: "G-8QFN8HSTH8"
   };
-  // ------------------------------------------------
 
-  // Initialisation de la base de données
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  // --- 2. INITIALISATION ---
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  let currentUser = null;
 
-  // Action quand on clique sur le bouton
-  document.getElementById('submitBtn').addEventListener('click', async () => {
-      
-      const email = document.getElementById('emailInput').value;
-      const adresse = document.getElementById('addressInput').value;
+  // --- 3. AUTHENTIFICATION ANONYME ---
+  auth.signInAnonymously()
+    .then(() => {
+        console.log("Utilisateur connecté anonymement.");
+    })
+    .catch((error) => {
+        console.error("Erreur Auth:", error);
+        updateStatus("Erreur Connexion", "danger");
+    });
 
-      if(email && adresse) {
-          try {
-              // On écrit dans la collection "utilisateurs"
-              await addDoc(collection(db, "utilisateurs"), {
-                  email: email,
-                  adresse_reelle: adresse,
-                  date_inscription: new Date()
-              });
-              
-              alert("SUCCÈS ! ✅\nL'adresse a été enregistrée dans ta base de données Firebase !");
-              // On vide les champs
-              document.getElementById('emailInput').value = "";
-              document.getElementById('addressInput').value = "";
-              
-          } catch (e) {
-              console.error("Erreur : ", e);
-              alert("Erreur technique : Regarde la console (F12) pour les détails. As-tu bien mis tes clés ?");
-          }
-      } else {
-          alert("Merci de remplir tous les champs.");
-      }
+  // --- 4. GESTION DE L'ÉTAT UTILISATEUR ---
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+        currentUser = user;
+        document.getElementById('user-id').innerText = user.uid;
+        updateStatus("Connecté", "success");
+        
+        // Démarrer l'écoute des emails
+        startInboxListener(user.uid);
+    } else {
+        updateStatus("Déconnecté", "secondary");
+    }
   });
+
+  // --- 5. ÉCOUTE DE LA BASE DE DONNÉES (TEMPS RÉEL) ---
+  function startInboxListener(uid) {
+      db.collection('emails')
+        .where('to_uid', '==', uid) // Filtre : seulement mes emails
+        .orderBy('timestamp', 'desc') // Tri : du plus récent au plus vieux
+        .onSnapshot((snapshot) => {
+            const listDiv = document.getElementById('inbox-list');
+            
+            if (snapshot.empty) {
+                listDiv.innerHTML = `
+                    <div class="list-group-item text-center p-5 text-muted">
+                        📭 Votre boîte est vide.
+                    </div>`;
+                return;
+            }
+
+            let htmlContent = '';
+            snapshot.forEach(doc => {
+                const mail = doc.data();
+                // Conversion date
+                let dateStr = "À l'instant";
+                if (mail.timestamp) {
+                    dateStr = new Date(mail.timestamp.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                }
+
+                htmlContent += `
+                <div class="list-group-item email-item p-3">
+                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                        <strong class="text-truncate" style="max-width: 70%;">${mail.subject || '(Sans objet)'}</strong>
+                        <small class="text-muted">${dateStr}</small>
+                    </div>
+                    <div class="small text-primary mb-1">${mail.from}</div>
+                    <p class="mb-1 text-muted small text-truncate">${mail.body}</p>
+                </div>`;
+            });
+
+            listDiv.innerHTML = htmlContent;
+        }, (error) => {
+            console.error("Erreur Firestore:", error);
+            // Souvent causé par des règles de sécurité manquantes
+            if(error.code === 'permission-denied') {
+                 alert("Erreur de permission ! Vérifiez les 'Règles' dans votre console Firebase.");
+            }
+        });
+  }
+
+  // --- 6. FONCTION DE TEST (ENVOI) ---
+  window.simulateIncomingEmail = function() {
+      if (!currentUser) return alert("Patience, connexion en cours...");
+
+      const fakeSenders = ["support@google.com", "newsletter@tech.fr", "amis@test.com"];
+      const fakeSubjects = ["Code de validation: 1234", "Bienvenue !", "Nouveau message reçu"];
+      
+      const sender = fakeSenders[Math.floor(Math.random() * fakeSenders.length)];
+      const subject = fakeSubjects[Math.floor(Math.random() * fakeSubjects.length)];
+
+      db.collection('emails').add({
+          to_uid: currentUser.uid, // IMPORTANT : l'email est tagué avec votre ID
+          from: sender,
+          subject: subject,
+          body: "Ceci est le contenu du message généré automatiquement pour tester l'application.",
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(err => {
+          alert("Erreur d'envoi : " + err.message);
+      });
+  };
+
+  function updateStatus(text, color) {
+      const badge = document.getElementById('status-badge');
+      badge.innerText = text;
+      badge.className = `badge bg-${color} text-white badge-status`;
+  }
 </script>
 
 </body>
