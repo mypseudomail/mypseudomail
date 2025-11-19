@@ -5,43 +5,194 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyPseudoMail - Interface Luxueuse</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-red: #8B0000; /* Rouge foncé */
-            --secondary-gold: #DAA520; /* Doré */
-            --bg-light: #F8F9FA;
-            --text-dark: #343A40;
-            --text-light: #fdf2e9; /* Pour le texte sur fond foncé */
-        }
-
         body {
-            background-color: var(--bg-light);
-            font-family: 'Lato', sans-serif;
-            color: var(--text-dark);
+            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        .container {
-            max-width: 850px;
-            margin-top: 30px;
-            margin-bottom: 30px;
+        .main-container {
+            max-width: 800px;
+            margin: 40px auto;
         }
-
-        .card {
+        .card-custom {
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background: white;
         }
-
-        .card-header-luxury {
-            background: linear-gradient(135deg, var(--primary-red) 0%, #B22222 100%);
-            color: var(--text-light);
-            padding: 20px 25px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .header-banner {
+            background: linear-gradient(135deg, #8B0000 0%, #B8860B 100%); /* Rouge et Or */
+            color: white;
+            padding: 30px;
+            text-align: center;
         }
+        .status-badge {
+            background-color: #B8860B;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        .btn-gold {
+            background-color: #B8860B;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .btn-gold:hover {
+            background-color: #9A7009;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .email-item {
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .email-item:hover {
+            background-color: #fffaf0; /* Fond très clair doré */
+            border-left: 4px solid #B8860B;
+        }
+        .email-subject {
+            color: #8B0000;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .email-meta {
+            font-size: 0.85rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
 
-        .card-header-
+<div class="container main-container">
+    
+    <div class="card card-custom mb-4">
+        <div class="header-banner">
+            <h1><i class="fas fa-envelope-open-text"></i> MyPseudoMail</h1>
+            <p class="mb-0">Votre messagerie anonyme sécurisée</p>
+            <span id="status-badge" class="status-badge">Connexion en cours...</span>
+        </div>
+        
+        <div class="card-body p-4">
+            <div class="alert alert-light border text-center" role="alert">
+                <strong>Votre ID :</strong> <code id="user-id" style="color: #8B0000;">Chargement...</code>
+            </div>
+
+            <button onclick="simulateIncomingEmail()" class="btn btn-gold mt-2">
+                <i class="fas fa-paper-plane"></i> Simuler la réception d'un email
+            </button>
+        </div>
+    </div>
+
+    <h4 class="mb-3" style="color: #8B0000; border-left: 5px solid #B8860B; padding-left: 10px;">Boîte de Réception</h4>
+    
+    <div class="card card-custom">
+        <div id="inbox-list">
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-spinner fa-spin fa-2x mb-3"></i><br>
+                Connexion au serveur...
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // 1. CONFIGURATION
+  const firebaseConfig = {
+    apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
+    authDomain: "mypseudomail-9d093.firebaseapp.com",
+    projectId: "mypseudomail-9d093",
+    storageBucket: "mypseudomail-9d093.firebasestorage.app",
+    messagingSenderId: "189746859638",
+    appId: "1:189746859638:web:abc519c2a17116a32b9957",
+    measurementId: "G-8QFN8HSTH8"
+  };
+
+  // 2. INITIALISATION
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  let currentUser = null;
+
+  // 3. AUTH
+  auth.signInAnonymously().catch((error) => {
+      console.error("Erreur Auth:", error);
+      document.getElementById('status-badge').innerText = "Erreur Connexion";
+      document.getElementById('status-badge').style.backgroundColor = "red";
+  });
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+        currentUser = user;
+        document.getElementById('user-id').innerText = user.uid;
+        document.getElementById('status-badge').innerText = "Connecté & Sécurisé";
+        startInboxListener(user.uid);
+    }
+  });
+
+  // 4. LISTENER
+  function startInboxListener(uid) {
+      db.collection('emails')
+        .where('to_uid', '==', uid)
+        .orderBy('timestamp', 'desc')
+        .onSnapshot((snapshot) => {
+            const listDiv = document.getElementById('inbox-list');
+            
+            if (snapshot.empty) {
+                listDiv.innerHTML = '<div class="p-5 text-center text-muted">Aucun message reçu pour le moment.</div>';
+                return;
+            }
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const mail = doc.data();
+                const date = mail.timestamp ? new Date(mail.timestamp.seconds * 1000).toLocaleTimeString() : '';
+                
+                html += `
+                <div class="email-item">
+                    <div class="d-flex justify-content-between">
+                        <div class="email-subject">${mail.subject}</div>
+                        <div class="email-meta">${date}</div>
+                    </div>
+                    <div class="email-meta mb-2">De: ${mail.from}</div>
+                    <div class="text-secondary">${mail.body}</div>
+                </div>`;
+            });
+            listDiv.innerHTML = html;
+        });
+  }
+
+  // 5. SIMULATION
+  window.simulateIncomingEmail = function() {
+      if (!currentUser) return;
+      db.collection('emails').add({
+          to_uid: currentUser.uid,
+          from: "service-client@luxe-or.fr",
+          subject: "Confirmation de votre compte Prestige",
+          body: "Ceci est un test de votre nouvelle interface dorée.",
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+  };
+</script>
+
+</body>
+</html>
