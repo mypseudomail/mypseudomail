@@ -3,137 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPseudoMail - Inscription</title>
+    <title>MyPseudoMail - Espace Membre</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f4f4f4;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
         }
-        .main-container {
-            max-width: 800px;
-            margin: 40px auto;
+
+        /* COULEURS DE LUXE */
+        :root {
+            --luxe-red: #8B0000;
+            --luxe-gold: #B8860B;
+            --luxe-gold-hover: #d4af37;
         }
-        .card-custom {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            overflow: hidden;
-            background: white;
-            margin-bottom: 25px;
-        }
-        .header-banner {
-            background: linear-gradient(135deg, #8B0000 0%, #B8860B 100%); /* Rouge et Or */
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        .status-badge {
-            background-color: #B8860B;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            margin-top: 10px;
-            display: inline-block;
-        }
-        /* Boutons Dorés */
+
+        /* Styles généraux */
+        .text-gold { color: var(--luxe-gold) !important; }
+        .text-red { color: var(--luxe-red) !important; }
+        .bg-red { background-color: var(--luxe-red) !important; }
+        
         .btn-gold {
-            background-color: #B8860B;
+            background: linear-gradient(45deg, var(--luxe-gold), #cf9e10);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
             font-weight: bold;
-            transition: all 0.3s;
+            transition: transform 0.2s;
         }
         .btn-gold:hover {
-            background-color: #9A7009;
+            transform: scale(1.02);
             color: white;
-            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(184, 134, 11, 0.4);
         }
-        
-        /* Styles des champs de formulaire */
-        .form-control:focus {
-            border-color: #B8860B;
-            box-shadow: 0 0 0 0.25rem rgba(184, 134, 11, 0.25);
+
+        .btn-outline-red {
+            border: 2px solid var(--luxe-red);
+            color: var(--luxe-red);
+            font-weight: bold;
         }
-        
+        .btn-outline-red:hover {
+            background-color: var(--luxe-red);
+            color: white;
+        }
+
+        /* CARD STYLE */
+        .card-luxury {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .card-header-luxury {
+            background: var(--luxe-red);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--luxe-gold);
+        }
+
+        /* EMAILS */
         .email-item {
             border-left: 4px solid transparent;
-            transition: all 0.2s;
-            padding: 20px;
-            border-bottom: 1px solid #eee;
             cursor: pointer;
+            transition: all 0.3s;
         }
         .email-item:hover {
-            background-color: #fffaf0;
-            border-left: 4px solid #B8860B;
+            background-color: #fff8e1; /* Fond doré très clair */
+            border-left: 4px solid var(--luxe-gold);
+            transform: translateX(5px);
         }
-        .section-title {
-            color: #8B0000; 
-            border-left: 5px solid #B8860B; 
-            padding-left: 10px;
-            margin-bottom: 15px;
+
+        /* Gestion des Vues (Pages) */
+        .view-section {
+            display: none; /* Caché par défaut */
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-<div class="container main-container">
-    
-    <div class="card card-custom">
-        <div class="header-banner">
-            <h1><i class="fas fa-envelope-open-text"></i> MyPseudoMail</h1>
-            <p class="mb-0">Service de Messagerie Premium</p>
-            <span id="status-badge" class="status-badge">Connexion...</span>
-        </div>
-        <div class="card-body text-center py-2">
-             <small class="text-muted">ID Actuel : <span id="user-id">...</span></small>
-        </div>
+<div id="view-login" class="view-section container py-5" style="max-width: 900px;">
+    <div class="text-center mb-5">
+        <h1 class="display-4 text-red fw-bold"><i class="fas fa-envelope-open-text text-gold"></i> MyPseudoMail</h1>
+        <p class="lead text-muted">L'élégance de la communication anonyme.</p>
     </div>
 
-    <h4 class="section-title">Créer un compte</h4>
-    <div class="card card-custom">
-        <div class="card-body p-4">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Adresse Email</label>
-                    <input type="email" id="reg-email" class="form-control" placeholder="exemple@email.com">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card card-luxury h-100">
+                <div class="card-header-luxury">
+                    <h4><i class="fas fa-user-plus"></i> Créer un Compte</h4>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Mot de passe</label>
-                    <input type="password" id="reg-password" class="form-control" placeholder="******">
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" id="reg-email" class="form-control" placeholder="nouveau@email.com">
+                    </div>
+                    <div class="mb-3">
+                        <label>Mot de passe (6+ char)</label>
+                        <input type="password" id="reg-pass" class="form-control" placeholder="******">
+                    </div>
+                    <button onclick="handleRegister()" class="btn btn-gold w-100 py-2">S'INSCRIRE GRATUITEMENT</button>
+                    <div id="reg-error" class="text-danger mt-2 text-center small"></div>
                 </div>
-                <div class="col-12">
-                    <button onclick="registerUser()" class="btn btn-gold w-100">
-                        <i class="fas fa-user-plus"></i> S'inscrire Maintenant
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-luxury h-100">
+                <div class="card-body p-5 d-flex flex-column justify-content-center">
+                    <h4 class="text-red text-center mb-4">Déjà Membre ?</h4>
+                    <div class="mb-3">
+                        <input type="email" id="login-email" class="form-control" placeholder="Votre email">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" id="login-pass" class="form-control" placeholder="Votre mot de passe">
+                    </div>
+                    <button onclick="handleLogin()" class="btn btn-outline-red w-100 mb-3">SE CONNECTER</button>
+                    
+                    <hr>
+                    <button onclick="loginAnonymous()" class="btn btn-light w-100 text-muted">
+                        <i class="fas fa-user-secret"></i> Continuer en Invité
                     </button>
                 </div>
             </div>
-            <div id="reg-message" class="mt-3 text-center"></div>
         </div>
     </div>
+</div>
 
-    <div class="text-end mb-3">
-        <button onclick="simulateIncomingEmail()" class="btn btn-outline-dark btn-sm">
-            <i class="fas fa-paper-plane"></i> Simuler un email entrant (Test)
-        </button>
-    </div>
+<div id="view-dashboard" class="view-section container py-4" style="max-width: 1000px;">
+    
+    <nav class="navbar navbar-light bg-white shadow-sm rounded mb-4 p-3">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1 text-red">
+                <i class="fas fa-envelope text-gold"></i> Espace Membre
+            </span>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-warning text-dark" id="user-display">...</span>
+                <button onclick="handleLogout()" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </div>
+        </div>
+    </nav>
 
-    <h4 class="section-title">Boîte de Réception</h4>
-    <div class="card card-custom">
-        <div id="inbox-list">
-            <div class="p-5 text-center text-muted">
-                <i class="fas fa-spinner fa-spin fa-2x mb-3"></i><br>
-                Chargement...
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card card-luxury text-center p-4">
+                <i class="fas fa-user-circle fa-4x text-gold mb-3"></i>
+                <h5 id="welcome-msg">Bienvenue</h5>
+                <p class="text-muted small">Votre boîte est sécurisée.</p>
+                <hr>
+                <button onclick="simulateIncomingEmail()" class="btn btn-dark btn-sm">
+                    <i class="fas fa-magic"></i> Simuler réception Email
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card card-luxury">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 text-red">Boîte de Réception</h5>
+                </div>
+                <div id="inbox-list" class="list-group list-group-flush" style="min-height: 300px;">
+                    <div class="p-5 text-center text-muted">Chargement...</div>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -152,106 +195,53 @@
     measurementId: "G-8QFN8HSTH8"
   };
 
-  // 2. INITIALISATION
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
-  let currentUser = null;
+  let inboxUnsubscribe = null; // Pour arrêter d'écouter quand on se déconnecte
 
-  // 3. AUTHENTIFICATION AUTO (Anonyme par défaut)
+  // 2. GESTION DES VUES (LE COEUR DU SYSTEME)
   auth.onAuthStateChanged((user) => {
-    if (user) {
-        currentUser = user;
-        document.getElementById('user-id').innerText = user.uid;
-        
-        if(user.isAnonymous) {
-            document.getElementById('status-badge').innerText = "Mode Invité";
-            document.getElementById('status-badge').style.backgroundColor = "#6c757d"; // Gris
-        } else {
-            document.getElementById('status-badge').innerText = "Compte Membre";
-            document.getElementById('status-badge').style.backgroundColor = "#B8860B"; // Or
-        }
-
-        startInboxListener(user.uid);
-    } else {
-        // Si pas connecté, on lance l'anonyme
-        auth.signInAnonymously().catch(err => console.error(err));
-    }
+      if (user) {
+          // >>> UTILISATEUR CONNECTÉ : Afficher Dashboard
+          showView('view-dashboard');
+          setupDashboard(user);
+      } else {
+          // >>> UTILISATEUR DÉCONNECTÉ : Afficher Login
+          showView('view-login');
+          if(inboxUnsubscribe) inboxUnsubscribe(); // Arrêter l'écoute
+      }
   });
 
-  // 4. NOUVELLE FONCTION : INSCRIPTION
-  function registerUser() {
-      const email = document.getElementById('reg-email').value;
-      const password = document.getElementById('reg-password').value;
-      const msgDiv = document.getElementById('reg-message');
-
-      if(password.length < 6) {
-          msgDiv.innerHTML = '<span class="text-danger">Le mot de passe doit faire 6 caractères minimum.</span>';
-          return;
-      }
-
-      msgDiv.innerHTML = '<span class="text-warning">Création du compte en cours...</span>';
-
-      // Création du compte
-      auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Succès
-            msgDiv.innerHTML = '<span class="text-success fw-bold">Compte créé avec succès ! Bienvenue ' + userCredential.user.email + '</span>';
-            // Vider les champs
-            document.getElementById('reg-email').value = '';
-            document.getElementById('reg-password').value = '';
-        })
-        .catch((error) => {
-            // Erreur
-            let errorMsg = "Erreur: " + error.message;
-            if(error.code === 'auth/email-already-in-use') errorMsg = "Cet email est déjà utilisé.";
-            if(error.code === 'auth/invalid-email') errorMsg = "Email invalide.";
-            
-            msgDiv.innerHTML = '<span class="text-danger">' + errorMsg + '</span>';
-        });
+  function showView(viewId) {
+      // Cache tout
+      document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+      // Affiche la vue demandée
+      document.getElementById(viewId).style.display = 'block';
   }
 
-  // 5. LISTENER (Boîte de réception)
-  function startInboxListener(uid) {
-      db.collection('emails')
-        .where('to_uid', '==', uid)
+  // 3. LOGIQUE DASHBOARD
+  function setupDashboard(user) {
+      const displayEmail = user.isAnonymous ? "Invité Anonyme" : user.email;
+      document.getElementById('user-display').innerText = displayEmail;
+      document.getElementById('welcome-msg').innerText = "Bonjour, " + (user.isAnonymous ? "Invité" : user.email.split('@')[0]);
+
+      // Écoute des emails
+      const listDiv = document.getElementById('inbox-list');
+      
+      inboxUnsubscribe = db.collection('emails')
+        .where('to_uid', '==', user.uid)
         .orderBy('timestamp', 'desc')
         .onSnapshot((snapshot) => {
-            const listDiv = document.getElementById('inbox-list');
             if (snapshot.empty) {
-                listDiv.innerHTML = '<div class="p-5 text-center text-muted">Aucun message.</div>';
+                listDiv.innerHTML = '<div class="p-5 text-center text-muted"><i class="fas fa-inbox fa-2x mb-2"></i><br>Aucun message.</div>';
                 return;
             }
+
             let html = '';
             snapshot.forEach(doc => {
                 const mail = doc.data();
-                const date = mail.timestamp ? new Date(mail.timestamp.seconds * 1000).toLocaleTimeString() : '';
-                html += `
-                <div class="email-item">
-                    <div class="d-flex justify-content-between">
-                        <strong style="color:#8B0000">${mail.subject || '(Sans objet)'}</strong>
-                        <small class="text-muted">${date}</small>
-                    </div>
-                    <div class="small text-secondary mb-2">De: ${mail.from}</div>
-                    <div class="text-dark">${mail.body}</div>
-                </div>`;
-            });
-            listDiv.innerHTML = html;
-        });
-  }
-
-  // 6. SIMULATION
-  window.simulateIncomingEmail = function() {
-      if (!currentUser) return;
-      db.collection('emails').add({
-          to_uid: currentUser.uid,
-          from: "notification@luxe.com",
-          subject: "Bienvenue nouveau membre !",
-          body: "Félicitations, votre compte est actif.",
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
-  };
-</script>
-
-</body>
-</html>
+                // Format Date
+                let dateStr = "";
+                if(mail.timestamp) {
+                    const d
