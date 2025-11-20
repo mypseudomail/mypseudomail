@@ -7,49 +7,59 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        /* COULEURS DE LUXE */
+        /* --- DESIGN LUXE ROUGE & OR --- */
         :root {
             --luxe-red: #8B0000;
             --luxe-gold: #B8860B;
+            --bg-light: #f8f9fa;
         }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; }
 
-        .text-gold { color: var(--luxe-gold) !important; }
+        /* Boutons et Textes */
         .text-red { color: var(--luxe-red) !important; }
-        
-        /* BOUTONS */
+        .text-gold { color: var(--luxe-gold) !important; }
         .btn-gold {
             background: linear-gradient(45deg, var(--luxe-gold), #cf9e10);
-            color: white;
-            border: none;
-            font-weight: bold;
+            color: white; border: none; font-weight: bold; transition: 0.3s;
         }
-        .btn-gold:hover { color: white; opacity: 0.9; }
-
-        /* CARTES */
+        .btn-gold:hover { transform: translateY(-2px); color: white; box-shadow: 0 5px 15px rgba(184, 134, 11, 0.3); }
+        
+        /* Cartes */
         .card-luxury {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow: hidden;
-            background: white;
+            border: none; border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            background: white; overflow: hidden;
         }
         .card-header-luxury {
-            background: var(--luxe-red);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 3px solid var(--luxe-gold);
+            background: var(--luxe-red); color: white; padding: 15px;
+            border-bottom: 3px solid var(--luxe-gold); text-align: center;
         }
 
-        /* GESTION DES VUES - CORRECTION ECRAN BLANC */
-        /* Par défaut, on affiche le login et on cache le dashboard */
-        #view-dashboard { display: none; }
-        #view-login { display: block; } 
+        /* --- SYSTEME DE VUES (PAGES) --- */
+        #view-dashboard { display: none; } /* Caché par défaut */
+        
+        /* Navigation des onglets */
+        .nav-pills .nav-link {
+            color: #555; font-weight: 600; margin-right: 5px;
+            border-radius: 8px; transition: all 0.3s;
+        }
+        .nav-pills .nav-link.active {
+            background-color: var(--luxe-red);
+            color: var(--luxe-gold);
+            border-bottom: 2px solid var(--luxe-gold);
+        }
+        .nav-pills .nav-link:hover:not(.active) {
+            background-color: #e9ecef; color: var(--luxe-red);
+        }
+
+        /* Contenu des onglets */
+        .tab-section { display: none; animation: fadeIn 0.4s; }
+        .tab-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Email Item */
+        .email-item { border-left: 4px solid transparent; cursor: pointer; transition: 0.2s; }
+        .email-item:hover { background-color: #fffdf5; border-left: 4px solid var(--luxe-gold); }
     </style>
 </head>
 <body>
@@ -57,193 +67,163 @@
 <div id="view-login" class="container py-5" style="max-width: 900px;">
     <div class="text-center mb-5">
         <h1 class="display-4 text-red fw-bold"><i class="fas fa-envelope-open-text text-gold"></i> MyPseudoMail</h1>
-        <p class="lead text-muted">L'élégance de la communication anonyme.</p>
-        <div id="auth-error-msg" class="alert alert-danger d-none"></div>
+        <p class="lead text-muted">Accédez à votre espace sécurisé.</p>
+        <div id="auth-error" class="alert alert-danger d-none mt-3"></div>
     </div>
 
     <div class="row g-4">
         <div class="col-md-6">
             <div class="card card-luxury h-100">
-                <div class="card-header-luxury">
-                    <h4><i class="fas fa-user-plus"></i> Inscription</h4>
-                </div>
+                <div class="card-header-luxury"><h4><i class="fas fa-user-plus"></i> Créer un compte</h4></div>
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <label>Email</label>
-                        <input type="email" id="reg-email" class="form-control" placeholder="email@exemple.com">
-                    </div>
-                    <div class="mb-3">
-                        <label>Mot de passe (6+ car.)</label>
-                        <input type="password" id="reg-pass" class="form-control" placeholder="******">
-                    </div>
-                    <button onclick="handleRegister()" class="btn btn-gold w-100 py-2">CRÉER UN COMPTE</button>
+                    <input type="email" id="reg-email" class="form-control mb-3" placeholder="Email">
+                    <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Mot de passe (6+ car.)">
+                    <button onclick="handleRegister()" class="btn btn-gold w-100">S'INSCRIRE</button>
                 </div>
             </div>
         </div>
-
         <div class="col-md-6">
             <div class="card card-luxury h-100">
-                <div class="card-body p-5 d-flex flex-column justify-content-center">
-                    <h4 class="text-red text-center mb-4">Déjà Membre ?</h4>
-                    <div class="mb-3">
-                        <input type="email" id="login-email" class="form-control" placeholder="Votre email">
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" id="login-pass" class="form-control" placeholder="Votre mot de passe">
-                    </div>
+                <div class="card-body p-5 text-center">
+                    <h4 class="text-red mb-4">Déjà membre ?</h4>
+                    <input type="email" id="login-email" class="form-control mb-3" placeholder="Votre Email">
+                    <input type="password" id="login-pass" class="form-control mb-3" placeholder="Votre Mot de passe">
                     <button onclick="handleLogin()" class="btn btn-outline-danger w-100 mb-3">SE CONNECTER</button>
-                    
                     <hr>
-                    <button onclick="loginAnonymous()" class="btn btn-light w-100 text-muted btn-sm">
-                        <i class="fas fa-user-secret"></i> Continuer en Invité (Anonyme)
-                    </button>
+                    <button onclick="loginAnonymous()" class="btn btn-sm btn-light w-100">Mode Invité (Test)</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div id="view-dashboard" class="container py-4" style="max-width: 1000px;">
+<div id="view-dashboard" class="container-fluid px-0">
     
-    <nav class="navbar navbar-light bg-white shadow-sm rounded mb-4 p-3">
-        <div class="container-fluid">
-            <span class="navbar-brand mb-0 h1 text-red">
-                <i class="fas fa-envelope text-gold"></i> Espace Membre
-            </span>
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-warning text-dark" id="user-display">Chargement...</span>
-                <button onclick="handleLogout()" class="btn btn-sm btn-outline-dark">
-                    <i class="fas fa-sign-out-alt"></i> Quitter
-                </button>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 py-3 sticky-top">
+        <div class="container">
+            <a class="navbar-brand text-red fw-bold" href="#"><i class="fas fa-envelope text-gold"></i> MyPseudoMail</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto nav-pills">
+                    <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-donnees', this)">Mes Données</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-produits', this)">Produits</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-tarifs', this)">Tarifications</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-guide', this)">Guide</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-faq', this)">FAQ</a></li>
+                </ul>
+                <div class="d-flex align-items-center mt-3 mt-lg-0">
+                    <span class="badge bg-warning text-dark me-3" id="user-badge">Membre</span>
+                    <button onclick="handleLogout()" class="btn btn-sm btn-outline-dark">Déconnexion</button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <div class="card card-luxury text-center p-4">
-                <i class="fas fa-user-circle fa-4x text-gold mb-3"></i>
-                <h5 id="welcome-msg">Bienvenue</h5>
-                <p class="text-muted small">Système prêt.</p>
-                <hr>
-                <button onclick="simulateIncomingEmail()" class="btn btn-dark btn-sm w-100">
-                    <i class="fas fa-magic"></i> Simuler réception Email
-                </button>
-            </div>
-        </div>
-
-        <div class="col-md-8">
-            <div class="card card-luxury">
-                <div class="card-header bg-white border-bottom">
-                    <h5 class="mb-0 text-red">Boîte de Réception</h5>
-                </div>
-                <div id="inbox-list" class="list-group list-group-flush" style="min-height: 200px;">
-                    <div class="p-5 text-center text-muted">En attente de messages...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-<script>
-  // 1. CONFIGURATION (Vos clés sont ici)
-  const firebaseConfig = {
-    apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
-    authDomain: "mypseudomail-9d093.firebaseapp.com",
-    projectId: "mypseudomail-9d093",
-    storageBucket: "mypseudomail-9d093.firebasestorage.app",
-    messagingSenderId: "189746859638",
-    appId: "1:189746859638:web:abc519c2a17116a32b9957",
-    measurementId: "G-8QFN8HSTH8"
-  };
-
-  // Initialisation sécurisée
-  try {
-      firebase.initializeApp(firebaseConfig);
-      console.log("Firebase initialisé");
-  } catch (e) {
-      console.error("Erreur Firebase", e);
-      alert("Erreur technique: " + e.message);
-  }
-
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  let inboxUnsubscribe = null;
-
-  // 2. LOGIQUE DE BASCULEMENT DES PAGES
-  auth.onAuthStateChanged((user) => {
-      if (user) {
-          // >>> Si connecté : On cache Login, on affiche Dashboard
-          console.log("Utilisateur connecté:", user.uid);
-          document.getElementById('view-login').style.display = 'none';
-          document.getElementById('view-dashboard').style.display = 'block';
-          setupDashboard(user);
-      } else {
-          // >>> Si déconnecté : On affiche Login, on cache Dashboard
-          console.log("Utilisateur déconnecté");
-          document.getElementById('view-login').style.display = 'block';
-          document.getElementById('view-dashboard').style.display = 'none';
-          if(inboxUnsubscribe) inboxUnsubscribe();
-      }
-  });
-
-  // 3. FONCTIONS DU DASHBOARD
-  function setupDashboard(user) {
-      const displayEmail = user.isAnonymous ? "Invité" : user.email;
-      document.getElementById('user-display').innerText = displayEmail;
-      document.getElementById('welcome-msg').innerText = user.isAnonymous ? "Mode Invité" : user.email.split('@')[0];
-
-      const listDiv = document.getElementById('inbox-list');
-      
-      inboxUnsubscribe = db.collection('emails')
-        .where('to_uid', '==', user.uid)
-        .orderBy('timestamp', 'desc')
-        .onSnapshot((snapshot) => {
-            if (snapshot.empty) {
-                listDiv.innerHTML = '<div class="p-5 text-center text-muted">Aucun message.</div>';
-                return;
-            }
-
-            let html = '';
-            snapshot.forEach(doc => {
-                const mail = doc.data();
-                const date = mail.timestamp ? new Date(mail.timestamp.seconds * 1000).toLocaleTimeString() : '';
-                html += `
-                <div class="list-group-item p-3 border-bottom">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h6 class="mb-1 text-red fw-bold">${mail.subject || 'Sans objet'}</h6>
-                        <small>${date}</small>
+    <div class="container py-5" style="max-width: 1000px;">
+        
+        <div id="tab-donnees" class="tab-section active">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card card-luxury p-4 text-center">
+                        <div class="mb-3"><i class="fas fa-user-circle fa-4x text-gold"></i></div>
+                        <h5 id="profile-email">Chargement...</h5>
+                        <p class="text-muted small mb-3">ID: <span id="profile-uid">...</span></p>
+                        <button onclick="simulateIncomingEmail()" class="btn btn-gold w-100">
+                            <i class="fas fa-magic"></i> Simuler Réception Email
+                        </button>
                     </div>
-                    <small class="text-gold">De: ${mail.from}</small>
-                    <p class="mb-1 text-muted small">${mail.body}</p>
-                </div>`;
-            });
-            listDiv.innerHTML = html;
-        });
-  }
+                </div>
+                <div class="col-md-8">
+                    <div class="card card-luxury">
+                        <div class="card-header-luxury py-2"><h5 class="m-0">Boîte de Réception</h5></div>
+                        <div id="inbox-list" class="list-group list-group-flush" style="min-height: 300px;">
+                            <div class="p-5 text-center text-muted">Chargement des messages...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  // 4. ACTIONS (Inscription / Connexion / Logout)
-  function handleRegister() {
-      const email = document.getElementById('reg-email').value;
-      const pass = document.getElementById('reg-pass').value;
-      
-      if(pass.length < 6) return showError("Le mot de passe doit faire 6 caractères minimum.");
+        <div id="tab-produits" class="tab-section">
+            <h2 class="text-red mb-4 border-bottom pb-2">Nos Produits Exclusifs</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card card-luxury h-100">
+                        <img src="https://via.placeholder.com/300x200/8B0000/FFFFFF?text=VPN+Gold" class="card-img-top" alt="VPN">
+                        <div class="card-body">
+                            <h5 class="card-title text-gold">VPN Gold</h5>
+                            <p class="card-text">Naviguez en anonymat total avec notre tunnel crypté militaire.</p>
+                            <button class="btn btn-outline-danger btn-sm">Découvrir</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-luxury h-100">
+                        <img src="https://via.placeholder.com/300x200/B8860B/FFFFFF?text=Mail+Pro" class="card-img-top" alt="Mail">
+                        <div class="card-body">
+                            <h5 class="card-title text-gold">PseudoMail Pro</h5>
+                            <p class="card-text">Adresses illimitées et stockage permanent pour vos affaires.</p>
+                            <button class="btn btn-outline-danger btn-sm">Découvrir</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-luxury h-100">
+                        <img src="https://via.placeholder.com/300x200/333333/FFFFFF?text=Cloud" class="card-img-top" alt="Cloud">
+                        <div class="card-body">
+                            <h5 class="card-title text-gold">Coffre-Fort Cloud</h5>
+                            <p class="card-text">Stockez vos documents sensibles dans un espace inviolable.</p>
+                            <button class="btn btn-outline-danger btn-sm">Découvrir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      auth.createUserWithEmailAndPassword(email, pass)
-        .catch(error => showError(error.message));
-  }
+        <div id="tab-tarifs" class="tab-section">
+            <div class="text-center mb-5">
+                <h2 class="text-red">Nos Offres</h2>
+                <p class="text-muted">Choisissez l'élégance qui vous convient.</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <div class="card card-luxury mb-4">
+                        <div class="card-header bg-light py-3 text-center"><h4>Gratuit</h4></div>
+                        <div class="card-body text-center">
+                            <h1 class="text-gold">0€<small class="fs-6 text-muted">/mois</small></h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>1 Adresse Email</li>
+                                <li>Réception Standard</li>
+                                <li>Pubs incluses</li>
+                            </ul>
+                            <button class="btn btn-outline-dark w-100">Actuel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-luxury mb-4 border-warning">
+                        <div class="card-header-luxury py-3"><h4>Gold Member</h4></div>
+                        <div class="card-body text-center">
+                            <h1 class="text-gold">9.99€<small class="fs-6 text-muted">/mois</small></h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>Adresses Illimitées</li>
+                                <li>Zéro Publicité</li>
+                                <li>Support VIP 24/7</li>
+                            </ul>
+                            <button class="btn btn-gold w-100">Passer Premium</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  function handleLogin() {
-      const email = document.getElementById('login-email').value;
-      const pass = document.getElementById('login-pass').value;
-      
-      auth.signInWithEmailAndPassword(email, pass)
-        .catch(error => showError(error.message));
-  }
-
-  function loginAnonymous() {
-
+        <div id="tab-guide" class="tab-section">
+            <div class="card card-luxury p-5">
+                <h2 class="text-red mb-4">Guide d'utilisation</h2>
+                <h5>1. Comment recevoir un email ?</h5>
+                <p class="text-muted">Votre boîte de réception dans l'onglet "Mes Données" écoute en temps réel. Dès qu'un mail arrive sur nos serveurs pour votre ID, il s'affiche.</p>
+                <hr>
+                <h5>2. Est-ce anonyme ?</h5>
+                <p class
