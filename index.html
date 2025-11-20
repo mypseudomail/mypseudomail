@@ -3,42 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GhostBox - Relais Postal & Étiquettes</title>
-    
+    <title>GhostBox - Relais & PDF</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <style>
         :root { --luxe-red: #8B0000; --luxe-gold: #B8860B; --bg-light: #f4f6f9; }
         body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; }
         
-        /* Masquage initial */
         #view-dashboard, .tab-section { display: none; }
         #view-login { display: block; }
 
-        /* Couleurs Luxe */
         .text-red { color: var(--luxe-red) !important; }
-        .text-gold { color: var(--luxe-gold) !important; }
         .btn-gold {
             background: linear-gradient(45deg, var(--luxe-gold), #d4af37);
-            color: white; border: none; font-weight: bold; box-shadow: 0 4px 10px rgba(184,134,11,0.3);
+            color: white; border: none; font-weight: bold;
         }
         .btn-gold:hover { transform: translateY(-2px); color: white; }
 
         .card-luxury {
             border: none; border-radius: 12px; background: white;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08); overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         }
         .card-header-luxury {
             background: var(--luxe-red); color: white; padding: 15px;
             border-bottom: 4px solid var(--luxe-gold);
         }
 
-        /* Navigation */
         .nav-pills .nav-link.active { background-color: var(--luxe-red); border-bottom: 2px solid var(--luxe-gold); }
         .nav-pills .nav-link { color: #555; font-weight: 600; margin: 0 5px; }
-        
-        /* Animation */
         .tab-section.active { display: block; animation: slideIn 0.4s; }
         @keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
     </style>
@@ -48,7 +40,7 @@
 <div id="view-login" class="container py-5" style="max-width: 900px;">
     <div class="text-center mb-5">
         <h1 class="display-4 text-red fw-bold"><i class="fas fa-box-open text-gold"></i> GhostBox</h1>
-        <p class="lead text-muted">Relais Postal Anonyme Sécurisé</p>
+        <p class="lead text-muted">Relais Postal Sécurisé</p>
     </div>
     <div class="row g-4">
         <div class="col-md-6">
@@ -56,8 +48,8 @@
                 <div class="card-header-luxury text-center"><h4>Inscription</h4></div>
                 <div class="card-body p-4">
                     <input type="email" id="reg-email" class="form-control mb-3" placeholder="Email">
-                    <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Mot de passe (6+ car.)">
-                    <button onclick="handleRegister()" class="btn btn-gold w-100">Créer un compte</button>
+                    <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Mot de passe">
+                    <button onclick="handleRegister()" class="btn btn-gold w-100">Créer Compte</button>
                 </div>
             </div>
         </div>
@@ -75,12 +67,12 @@
 </div>
 
 <div id="view-dashboard">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
+    <nav class="navbar navbar-light bg-white shadow-sm px-4">
         <div class="container">
-            <a class="navbar-brand text-red fw-bold" href="#"><i class="fas fa-shipping-fast text-gold"></i> GhostBox</a>
-            <div class="d-flex align-items-center">
-                <span class="badge bg-warning text-dark me-3" id="user-email-display">...</span>
-                <button onclick="auth.signOut()" class="btn btn-sm btn-outline-dark">Déconnexion</button>
+            <a class="navbar-brand text-red fw-bold" href="#">GhostBox</a>
+            <div>
+                <span class="badge bg-warning text-dark me-2" id="user-email-display">...</span>
+                <button onclick="auth.signOut()" class="btn btn-sm btn-outline-dark">Sortir</button>
             </div>
         </div>
     </nav>
@@ -90,68 +82,53 @@
             <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-expedier', this)">📦 Expédier</a></li>
             <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-etiquettes', this)">🏷️ Mes Étiquettes</a></li>
             <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-suivi', this)">📡 Suivi</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-adresse', this)">🏠 Mon Adresse</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-tarifs', this)">💰 Tarifs</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-adresse', this)">🏠 Adresse</a></li>
         </ul>
 
         <div id="tab-expedier" class="tab-section active">
             <div class="row justify-content-center">
                 <div class="col-md-8">
-                    <div class="card card-luxury">
-                        <div class="card-header-luxury"><h5>Nouvel Envoi</h5></div>
-                        <div class="card-body p-4">
-                            <div class="mb-3">
-                                <label class="fw-bold text-red">Destinataire (Email GhostBox)</label>
-                                <input type="email" id="send-dest-email" class="form-control" placeholder="ami@test.com">
+                    <div class="card card-luxury p-4">
+                        <h5 class="text-red border-bottom pb-2">Nouvel Envoi</h5>
+                        <label class="fw-bold mt-3">Destinataire (Email)</label>
+                        <input type="email" id="send-dest-email" class="form-control mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="fw-bold">Format</label>
+                                <select class="form-select" id="send-type" onchange="updatePrice()">
+                                    <option value="Lettre">✉️ Lettre</option>
+                                    <option value="Petit Colis">📦 Petit Colis</option>
+                                    <option value="Gros Colis">📦 Gros Colis</option>
+                                </select>
                             </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <label class="fw-bold">Format</label>
-                                    <select class="form-select" id="send-type" onchange="calculatePrice()">
-                                        <option value="Lettre">✉️ Lettre</option>
-                                        <option value="Petit Colis">📦 Petit Colis</option>
-                                        <option value="Gros Colis">📦 Gros Colis</option>
-                                    </select>
-                                </div>
-                                <div class="col-6">
-                                    <label class="fw-bold">Poids (g)</label>
-                                    <input type="number" id="send-weight" class="form-control" placeholder="Ex: 500">
-                                </div>
+                            <div class="col-6">
+                                <label class="fw-bold">Prix</label>
+                                <div class="h4 text-red" id="price-display">4.50 €</div>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded mb-3">
-                                <strong>Total à payer :</strong>
-                                <h3 class="text-red mb-0" id="price-display">4.50 €</h3>
-                            </div>
-                            <button onclick="processShipment()" class="btn btn-gold w-100 py-2">
-                                <i class="fas fa-credit-card"></i> Payer
-                            </button>
                         </div>
+                        <button onclick="processShipment()" class="btn btn-gold w-100 mt-4 py-2">Payer & Générer</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="tab-etiquettes" class="tab-section">
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> Voici vos étiquettes payées. Cliquez sur "PDF" pour télécharger et imprimer.
-            </div>
-            <div id="list-labels" class="row g-3">
-                <div class="text-center p-5 text-muted">Chargement...</div>
-            </div>
+            <div class="alert alert-info">Cliquez sur "PDF" pour télécharger l'étiquette à imprimer.</div>
+            <div id="list-labels" class="row g-3">Chargement...</div>
         </div>
 
         <div id="tab-suivi" class="tab-section">
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header bg-light fw-bold">📤 Colis Envoyés (Statut)</div>
-                        <div id="list-sent" class="list-group list-group-flush">Chargement...</div>
+                <div class="col-md-6">
+                    <div class="card p-3 h-100">
+                        <h6>📤 Envoyés</h6>
+                        <div id="list-sent" class="list-group list-group-flush">...</div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header bg-light fw-bold">📥 Colis Attendus</div>
-                        <div id="list-received" class="list-group list-group-flush">Chargement...</div>
+                    <div class="card p-3 h-100">
+                        <h6>📥 Reçus</h6>
+                        <div id="list-received" class="list-group list-group-flush">...</div>
                     </div>
                 </div>
             </div>
@@ -159,28 +136,12 @@
 
         <div id="tab-adresse" class="tab-section">
             <div class="card card-luxury p-4 mx-auto" style="max-width: 600px;">
-                <h4 class="text-red">Mon Adresse de Réception</h4>
-                <p class="small text-muted">Nécessaire pour recevoir des colis.</p>
-                <input type="text" id="addr-name" class="form-control mb-2" placeholder="Nom complet">
+                <h5 class="text-red">Mon Adresse de Réception</h5>
+                <input type="text" id="addr-name" class="form-control mb-2" placeholder="Nom">
                 <input type="text" id="addr-street" class="form-control mb-2" placeholder="Rue">
-                <div class="row">
-                    <div class="col-4"><input type="text" id="addr-zip" class="form-control" placeholder="CP"></div>
-                    <div class="col-8"><input type="text" id="addr-city" class="form-control" placeholder="Ville"></div>
-                </div>
-                <button onclick="saveAddress()" class="btn btn-gold w-100 mt-3">Enregistrer</button>
-                <div id="addr-msg" class="mt-2 text-success text-center"></div>
-            </div>
-        </div>
-
-        <div id="tab-tarifs" class="tab-section text-center">
-            <div class="card card-luxury p-4">
-                <h3>Tarifs Uniques</h3>
-                <p>Inclut l'anonymisation et la réexpédition.</p>
-                <div class="row mt-4">
-                    <div class="col-4"><h4>4.50€</h4><small>Lettre</small></div>
-                    <div class="col-4"><h4>12.90€</h4><small>Colis Standard</small></div>
-                    <div class="col-4"><h4>29.90€</h4><small>Gros Colis</small></div>
-                </div>
+                <input type="text" id="addr-city" class="form-control mb-2" placeholder="Ville">
+                <button onclick="saveAddress()" class="btn btn-gold w-100">Enregistrer</button>
+                <div id="addr-msg" class="text-success text-center mt-2"></div>
             </div>
         </div>
     </div>
@@ -192,7 +153,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-// 1. CONFIG FIREBASE
 const firebaseConfig = {
     apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
     authDomain: "mypseudomail-9d093.firebaseapp.com",
@@ -207,34 +167,20 @@ try { firebase.initializeApp(firebaseConfig); } catch(e) {}
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// 2. ROUTING ET CHARGEMENT
+// --- LOGIQUE ---
 auth.onAuthStateChanged(user => {
     if(user) {
         document.getElementById('view-login').style.display = 'none';
         document.getElementById('view-dashboard').style.display = 'block';
         document.getElementById('user-email-display').innerText = user.email;
         loadMyAddress(user);
-        loadShipments(user);
-        loadLabels(user); // Chargement des étiquettes
+        loadLabels(user);
+        loadTracking(user);
     } else {
         document.getElementById('view-login').style.display = 'block';
         document.getElementById('view-dashboard').style.display = 'none';
     }
 });
-
-// 3. ACTIONS DE BASE
-function handleRegister() {
-    const email = document.getElementById('reg-email').value;
-    const pass = document.getElementById('reg-pass').value;
-    if(pass.length < 6) return alert("Mot de passe trop court");
-    auth.createUserWithEmailAndPassword(email, pass).catch(e => alert(e.message));
-}
-
-function handleLogin() {
-    const email = document.getElementById('login-email').value;
-    const pass = document.getElementById('login-pass').value;
-    auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
-}
 
 function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
@@ -243,180 +189,138 @@ function switchTab(tabId, btn) {
     if(btn) btn.classList.add('active');
 }
 
-function calculatePrice() {
-    const type = document.getElementById('send-type').value;
-    let p = 4.50;
-    if(type.includes("Petit")) p = 12.90;
-    if(type.includes("Gros")) p = 29.90;
-    document.getElementById('price-display').innerText = p.toFixed(2) + " €";
+function updatePrice() {
+    const t = document.getElementById('send-type').value;
+    let p = "4.50 €";
+    if(t.includes("Petit")) p = "12.90 €";
+    if(t.includes("Gros")) p = "29.90 €";
+    document.getElementById('price-display').innerText = p;
 }
 
-// 4. GESTION ADRESSE
+// --- ACTIONS ---
+function handleRegister() {
+    const e = document.getElementById('reg-email').value;
+    const p = document.getElementById('reg-pass').value;
+    if(p.length<6) return alert("Mot de passe trop court");
+    auth.createUserWithEmailAndPassword(e, p).catch(err => alert(err.message));
+}
+function handleLogin() {
+    const e = document.getElementById('login-email').value;
+    const p = document.getElementById('login-pass').value;
+    auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
+}
 function saveAddress() {
-    const user = auth.currentUser;
-    if(!user) return;
-    db.collection('users_addresses').doc(user.uid).set({
+    const u = auth.currentUser;
+    if(!u) return;
+    db.collection('users_addresses').doc(u.uid).set({
         name: document.getElementById('addr-name').value,
         street: document.getElementById('addr-street').value,
-        zip: document.getElementById('addr-zip').value,
         city: document.getElementById('addr-city').value
-    }, { merge: true }).then(() => document.getElementById('addr-msg').innerText = "Adresse OK !");
+    }, {merge:true}).then(() => document.getElementById('addr-msg').innerText = "Adresse Sauvegardée !");
 }
-
-function loadMyAddress(user) {
-    db.collection('users_addresses').doc(user.uid).get().then(doc => {
+function loadMyAddress(u) {
+    db.collection('users_addresses').doc(u.uid).get().then(doc => {
         if(doc.exists) {
-            const d = doc.data();
-            document.getElementById('addr-name').value = d.name || '';
-            document.getElementById('addr-street').value = d.street || '';
-            document.getElementById('addr-zip').value = d.zip || '';
-            document.getElementById('addr-city').value = d.city || '';
+            document.getElementById('addr-name').value = doc.data().name || '';
+            document.getElementById('addr-street').value = doc.data().street || '';
+            document.getElementById('addr-city').value = doc.data().city || '';
         }
     });
 }
 
-// 5. EXPÉDITION
+// --- EXPÉDITION & PDF ---
 function processShipment() {
     const dest = document.getElementById('send-dest-email').value;
-    const user = auth.currentUser;
+    const type = document.getElementById('send-type').value;
+    const u = auth.currentUser;
+    if(!dest) return alert("Email requis !");
     
-    if(!dest) return alert("Email destinataire manquant !");
+    const code = "GB-" + Math.floor(100000 + Math.random() * 900000);
     
-    const trackCode = "GB-" + Math.floor(100000 + Math.random() * 900000);
-
     db.collection('shipments').add({
-        sender_uid: user.uid,
-        sender_email: user.email,
+        sender_uid: u.uid,
+        sender_email: u.email,
         recipient_email: dest,
+        type: type,
+        tracking_code: code,
         status: 'paid',
-        tracking_code: trackCode,
-        type: document.getElementById('send-type').value,
         created_at: firebase.firestore.FieldValue.serverTimestamp()
     }).then(() => {
-        alert("✅ Paiement validé !\nVotre étiquette est disponible dans l'onglet 'Mes Étiquettes'.");
-        switchTab('tab-etiquettes'); // Redirection auto
+        alert("Paiement OK ! Allez dans l'onglet 'Mes Étiquettes'.");
+        switchTab('tab-etiquettes');
     });
 }
 
-// 6. AFFICHAGE DES ÉTIQUETTES + GÉNÉRATION PDF
 function loadLabels(user) {
-    db.collection('shipments').where('sender_uid', '==', user.uid)
-      .orderBy('created_at', 'desc')
-      .onSnapshot(snap => {
-          const container = document.getElementById('list-labels');
-          container.innerHTML = '';
-          
-          if(snap.empty) {
-              container.innerHTML = '<div class="text-center p-5 text-muted">Aucune étiquette à imprimer.</div>';
-              return;
-          }
-
-          snap.forEach(doc => {
-             const d = doc.data();
-             // On crée un élément visuel pour l'étiquette
-             const col = document.createElement('div');
-             col.className = 'col-md-6';
-             col.innerHTML = `
-                <div class="card shadow-sm h-100">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="mb-1 text-red fw-bold">${d.tracking_code}</h5>
-                            <small class="text-muted">Vers: ${d.recipient_email}</small><br>
-                            <span class="badge bg-light text-dark border">${d.type}</span>
-                        </div>
-                        <button class="btn btn-gold btn-sm" onclick='generatePDF(${JSON.stringify(d)})'>
-                            <i class="fas fa-file-pdf"></i> PDF
-                        </button>
-                    </div>
-                </div>
-             `;
-             container.appendChild(col);
-          });
-      });
-}
-
-// FONCTION MAGIQUE : GÉNÉRATION DU PDF
-async function generatePDF(data) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: 'a6' // Format étiquette standard
-    });
-
-    // Cadre
-    doc.setLineWidth(1);
-    doc.rect(5, 5, 138, 95);
-
-    // En-tête
-    doc.setFontSize(16);
-    doc.setFont("helvetica", "bold");
-    doc.text("GHOSTBOX RELAIS", 74, 15, null, null, "center");
-    
-    // Code barre (simulation visuelle)
-    doc.setLineWidth(10);
-    doc.line(20, 25, 128, 25); // Grosse barre noire
-    doc.setFontSize(10);
-    doc.setFont("courier", "normal");
-    doc.text("* " + data.tracking_code + " *", 74, 32, null, null, "center");
-
-    // Expéditeur
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "bold");
-    doc.text("EXPÉDITEUR (VOUS):", 10, 45);
-    doc.setFont("helvetica", "normal");
-    doc.text(data.sender_email, 10, 50);
-
-    // Ligne séparation
-    doc.setLineWidth(0.5);
-    doc.line(5, 60, 143, 60);
-
-    // Destinataire (HUB)
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("À ENVOYER AU HUB CENTRAL :", 10, 70);
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("GHOSTBOX LOGISTICS CENTER", 10, 75);
-    doc.text("Ref Destinataire: " + data.recipient_email, 10, 80);
-    doc.text("14 Avenue de l'Anonymat, 75000 PARIS", 10, 85);
-
-    // Pied de page
-    doc.setFontSize(8);
-    doc.text("Affranchissement payé - Type: " + data.type, 10, 95);
-
-    // Sauvegarde
-    doc.save(`Etiquette-${data.tracking_code}.pdf`);
-}
-
-// 7. CHARGEMENT DU SUIVI
-function loadShipments(user) {
-    // Suivi simple (sans bouton PDF)
     db.collection('shipments').where('sender_uid', '==', user.uid).orderBy('created_at', 'desc')
       .onSnapshot(snap => {
-          let html = '';
+          const div = document.getElementById('list-labels');
+          div.innerHTML = '';
+          if(snap.empty) { div.innerHTML = '<p class="text-muted text-center">Aucune étiquette.</p>'; return; }
+          
           snap.forEach(doc => {
-             const d = doc.data();
-             html += `<div class="list-group-item d-flex justify-content-between">
-                <span>Vers ${d.recipient_email}</span>
-                <span class="badge bg-secondary">${d.status}</span>
-             </div>`;
+              const d = doc.data();
+              // ATTENTION : Ici je passe les arguments 1 par 1 pour éviter les bugs
+              const btnHtml = `<button class="btn btn-gold btn-sm" onclick="generatePDF('${d.tracking_code}', '${d.sender_email}', '${d.recipient_email}', '${d.type}')"><i class="fas fa-file-pdf"></i> PDF</button>`;
+              
+              div.innerHTML += `
+              <div class="col-md-6">
+                  <div class="card p-3 shadow-sm">
+                      <div class="d-flex justify-content-between align-items-center">
+                          <div><strong>${d.tracking_code}</strong><br><small>Vers: ${d.recipient_email}</small></div>
+                          ${btnHtml}
+                      </div>
+                  </div>
+              </div>`;
           });
-          document.getElementById('list-sent').innerHTML = html;
       });
+}
 
-    db.collection('shipments').where('recipient_email', '==', user.email).orderBy('created_at', 'desc')
-      .onSnapshot(snap => {
-          let html = '';
-          snap.forEach(doc => {
-             const d = doc.data();
-             html += `<div class="list-group-item border-warning border-start border-3">
-                <strong>De: ${d.sender_email}</strong><br>
-                <span class="badge bg-primary">${d.status}</span>
-             </div>`;
-          });
-          document.getElementById('list-received').innerHTML = html;
-      });
+// GENERATION PDF (Corrigée)
+async function generatePDF(code, sender, recipient, type) {
+    if(!window.jspdf) return alert("Erreur: Librairie PDF non chargée. Rafraichissez la page.");
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', format: 'a6', unit: 'mm' });
+
+    doc.setLineWidth(1);
+    doc.rect(2, 2, 144, 101); // Cadre
+
+    doc.setFontSize(14); doc.setFont("helvetica", "bold");
+    doc.text("GHOSTBOX RELAIS", 74, 12, null, null, "center");
+    
+    doc.setLineWidth(8);
+    doc.line(10, 22, 138, 22); // Faux code barre
+    doc.setFontSize(10); doc.setFont("courier", "bold");
+    doc.text(code, 74, 30, null, null, "center");
+
+    doc.setFont("helvetica", "normal"); doc.setFontSize(9);
+    doc.text("EXP: " + sender, 5, 45);
+    
+    doc.line(2, 55, 146, 55); // Ligne séparation
+
+    doc.setFontSize(11); doc.setFont("helvetica", "bold");
+    doc.text("DESTINATAIRE (HUB CENTRAL):", 5, 65);
+    doc.setFontSize(10); doc.setFont("helvetica", "normal");
+    doc.text("GHOSTBOX LOGISTICS", 5, 72);
+    doc.text("REF CLIENT: " + recipient, 5, 78);
+    doc.text("100 Rue de l'Anonymat, 75000 PARIS", 5, 84);
+
+    doc.setFontSize(8);
+    doc.text("Type: " + type + " - Affranchi", 140, 98, null, null, "right");
+
+    doc.save("Etiquette_" + code + ".pdf");
+}
+
+function loadTracking(user) {
+    db.collection('shipments').where('sender_uid', '==', user.uid).onSnapshot(s => {
+        let h = ''; s.forEach(d => h+=`<div class="list-group-item">${d.data().tracking_code} <span class="badge bg-secondary">${d.data().status}</span></div>`);
+        document.getElementById('list-sent').innerHTML = h || "Rien.";
+    });
+    db.collection('shipments').where('recipient_email', '==', user.email).onSnapshot(s => {
+        let h = ''; s.forEach(d => h+=`<div class="list-group-item border-start border-3 border-warning">De: ${d.data().sender_email}<br>${d.data().status}</div>`);
+        document.getElementById('list-received').innerHTML = h || "Rien.";
+    });
 }
 </script>
 </body>
