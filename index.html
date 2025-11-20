@@ -3,32 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GhostBox - Relais Postal Anonyme</title>
-    
+    <title>GhostBox - Relais Postal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <style>
         :root { --luxe-red: #8B0000; --luxe-gold: #B8860B; --bg-light: #f4f6f9; }
         body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; }
         
-        /* Masquer les vues au chargement */
         #view-dashboard, .tab-section { display: none; }
         #view-login { display: block; }
 
-        /* Couleurs */
         .text-red { color: var(--luxe-red) !important; }
         .text-gold { color: var(--luxe-gold) !important; }
-        .bg-red { background-color: var(--luxe-red) !important; }
-        
-        /* Boutons Dorés */
         .btn-gold {
             background: linear-gradient(45deg, var(--luxe-gold), #d4af37);
             color: white; border: none; font-weight: bold; box-shadow: 0 4px 10px rgba(184,134,11,0.3);
         }
         .btn-gold:hover { transform: translateY(-2px); color: white; }
 
-        /* Cartes */
         .card-luxury {
             border: none; border-radius: 12px; background: white;
             box-shadow: 0 5px 20px rgba(0,0,0,0.08); overflow: hidden;
@@ -38,17 +30,25 @@
             border-bottom: 4px solid var(--luxe-gold);
         }
 
-        /* Navigation */
         .nav-pills .nav-link.active { background-color: var(--luxe-red); border-bottom: 2px solid var(--luxe-gold); }
         .nav-pills .nav-link { color: #555; font-weight: 600; }
-        
-        /* Étapes de suivi */
-        .timeline-step { font-size: 0.8rem; color: #888; border-left: 2px solid #ddd; padding-left: 15px; margin-left: 5px; }
-        .timeline-step.active { color: var(--luxe-red); border-color: var(--luxe-gold); font-weight: bold; }
-        
-        /* Animation */
         .tab-section.active { display: block; animation: slideIn 0.4s; }
         @keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+        /* STYLE DE L'ÉTIQUETTE */
+        .shipping-label {
+            border: 2px dashed #333;
+            background: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            display: none; /* Caché par défaut */
+        }
+        .barcode {
+            height: 40px;
+            background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 4px);
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -56,7 +56,7 @@
 <div id="view-login" class="container py-5" style="max-width: 900px;">
     <div class="text-center mb-5">
         <h1 class="display-4 text-red fw-bold"><i class="fas fa-box-open text-gold"></i> GhostBox</h1>
-        <p class="lead text-muted">La plateforme de relais postal 100% anonyme.</p>
+        <p class="lead text-muted">Relais Postal Anonyme Sécurisé</p>
     </div>
     <div class="row g-4">
         <div class="col-md-6">
@@ -64,7 +64,7 @@
                 <div class="card-header-luxury text-center"><h4>Inscription</h4></div>
                 <div class="card-body p-4">
                     <input type="email" id="reg-email" class="form-control mb-3" placeholder="Email">
-                    <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Mot de passe">
+                    <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Mot de passe (6+ car.)">
                     <button onclick="handleRegister()" class="btn btn-gold w-100">Créer un compte</button>
                 </div>
             </div>
@@ -80,7 +80,6 @@
             </div>
         </div>
     </div>
-    <div id="auth-error" class="alert alert-danger d-none mt-3 text-center"></div>
 </div>
 
 <div id="view-dashboard">
@@ -96,9 +95,9 @@
 
     <div class="container py-4">
         <ul class="nav nav-pills mb-4 justify-content-center">
-            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-expedier', this)">📦 Expédier un Colis</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-suivi', this)">📡 Suivi / Réception</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-adresse', this)">🏠 Mon Adresse Réelle</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-expedier', this)">📦 Expédier</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-suivi', this)">📡 Suivi</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-adresse', this)">🏠 Mon Adresse</a></li>
             <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-tarifs', this)">💰 Tarifs</a></li>
         </ul>
 
@@ -106,50 +105,44 @@
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="card card-luxury">
-                        <div class="card-header-luxury"><h5>Nouvel Envoi Sécurisé</h5></div>
+                        <div class="card-header-luxury"><h5>Nouvel Envoi</h5></div>
                         <div class="card-body p-4">
-                            <div class="mb-4">
-                                <label class="fw-bold text-red">1. Destinataire (Membre GhostBox)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user-secret"></i></span>
-                                    <input type="email" id="send-dest-email" class="form-control" placeholder="Email du destinataire">
-                                </div>
-                                <small class="text-muted">Nous vérifierons s'il est inscrit. Son adresse restera masquée.</small>
+                            <div class="mb-3">
+                                <label class="fw-bold text-red">Destinataire (Email)</label>
+                                <input type="email" id="send-dest-email" class="form-control" placeholder="ami@test.com">
                             </div>
-
-                            <div class="mb-4">
-                                <label class="fw-bold text-red">2. Caractéristiques</label>
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <select class="form-select" id="send-type" onchange="calculatePrice()">
-                                            <option value="lettre">✉️ Lettre (-100g)</option>
-                                            <option value="colis_s">📦 Petit Colis (-1kg)</option>
-                                            <option value="colis_m">📦 Moyen Colis (-5kg)</option>
-                                            <option value="colis_l">📦 Gros Colis (+5kg)</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-6">
-                                        <input type="number" id="send-weight" class="form-control" placeholder="Poids (grammes)" oninput="calculatePrice()">
-                                    </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="fw-bold">Format</label>
+                                    <select class="form-select" id="send-type" onchange="calculatePrice()">
+                                        <option value="Lettre">✉️ Lettre</option>
+                                        <option value="Petit Colis">📦 Petit Colis</option>
+                                        <option value="Gros Colis">📦 Gros Colis</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="fw-bold">Poids (g)</label>
+                                    <input type="number" id="send-weight" class="form-control" placeholder="Ex: 500">
                                 </div>
                             </div>
-
-                            <div class="alert alert-warning border-warning">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Total à payer :</strong>
-                                        <div class="small text-muted">
-                                            1. Transport vers Plateforme<br>
-                                            2. Réexpédition vers Destinataire
-                                        </div>
-                                    </div>
-                                    <h2 class="text-red mb-0" id="price-display">0.00 €</h2>
-                                </div>
+                            <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded mb-3">
+                                <strong>Total à payer :</strong>
+                                <h3 class="text-red mb-0" id="price-display">4.50 €</h3>
                             </div>
-
-                            <button onclick="processShipment()" class="btn btn-gold w-100 py-3 fs-5">
-                                <i class="fas fa-print"></i> Payer & Générer l'Étiquette
+                            <button onclick="processShipment()" class="btn btn-gold w-100 py-2">
+                                <i class="fas fa-credit-card"></i> Payer & Imprimer Étiquette
                             </button>
+
+                            <div id="final-label" class="shipping-label text-center">
+                                <h5>GHOSTBOX RELAIS</h5>
+                                <div class="barcode"></div>
+                                <h3 id="label-code">GB-123456</h3>
+                                <hr>
+                                <p class="mb-0 text-start"><strong>Exp:</strong> <span id="label-sender">Moi</span></p>
+                                <p class="mb-0 text-start"><strong>Dest:</strong> GHOSTBOX HUB CENTRAL<br>REF: <span id="label-ref">...</span></p>
+                                <hr>
+                                <small>Collez ceci sur le colis et envoyez-le à notre centre.</small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -158,48 +151,45 @@
 
         <div id="tab-suivi" class="tab-section">
             <div class="row">
-                <div class="col-md-6">
-                    <h5 class="text-red mb-3">📤 J'ai envoyé</h5>
-                    <div id="list-sent" class="list-group">Chargement...</div>
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header bg-light fw-bold">📤 Colis Envoyés (Par moi)</div>
+                        <div id="list-sent" class="list-group list-group-flush">Chargement...</div>
+                    </div>
                 </div>
                 <div class="col-md-6">
-                    <h5 class="text-red mb-3">📥 Je vais recevoir</h5>
-                    <div id="list-received" class="list-group">Chargement...</div>
-                    <div class="alert alert-info mt-3 small">
-                        <i class="fas fa-info-circle"></i> Vous devez avoir renseigné votre adresse dans l'onglet "Mon Adresse" pour recevoir.
+                    <div class="card h-100">
+                        <div class="card-header bg-light fw-bold">📥 Colis Attendus (Pour moi)</div>
+                        <div id="list-received" class="list-group list-group-flush">Chargement...</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="tab-adresse" class="tab-section">
-            <div class="card card-luxury p-4" style="max-width: 600px; margin: auto;">
-                <h4 class="text-red mb-3"><i class="fas fa-map-marker-alt"></i> Mon Adresse de Livraison</h4>
-                <p class="text-muted">Ces données sont chiffrées et visibles UNIQUEMENT par la plateforme GhostBox pour la réexpédition. Aucun expéditeur ne verra ceci.</p>
-                
-                <div class="mb-2"><input type="text" id="addr-name" class="form-control" placeholder="Nom complet"></div>
-                <div class="mb-2"><input type="text" id="addr-street" class="form-control" placeholder="Numéro et Rue"></div>
-                <div class="row mb-3">
-                    <div class="col-4"><input type="text" id="addr-zip" class="form-control" placeholder="Code Postal"></div>
+            <div class="card card-luxury p-4 mx-auto" style="max-width: 600px;">
+                <h4 class="text-red">Mon Adresse de Réception</h4>
+                <p class="small text-muted">Nécessaire pour recevoir des colis.</p>
+                <input type="text" id="addr-name" class="form-control mb-2" placeholder="Nom complet">
+                <input type="text" id="addr-street" class="form-control mb-2" placeholder="Rue">
+                <div class="row">
+                    <div class="col-4"><input type="text" id="addr-zip" class="form-control" placeholder="CP"></div>
                     <div class="col-8"><input type="text" id="addr-city" class="form-control" placeholder="Ville"></div>
                 </div>
-                <button onclick="saveAddress()" class="btn btn-gold w-100">Enregistrer mes coordonnées</button>
-                <div id="addr-msg" class="mt-2 text-center text-success fw-bold"></div>
+                <button onclick="saveAddress()" class="btn btn-gold w-100 mt-3">Enregistrer</button>
+                <div id="addr-msg" class="mt-2 text-success text-center"></div>
             </div>
         </div>
 
-        <div id="tab-tarifs" class="tab-section">
-            <div class="card card-luxury p-4 text-center">
-                <h3 class="text-red">Double Affranchissement Inclus</h3>
-                <p>Nous calculons automatiquement le coût de l'envoi vers notre Hub + la réexpédition chez votre correspondant.</p>
-                <table class="table mt-4">
-                    <thead class="table-light"><tr><th>Type</th><th>Poids</th><th>Tarif Total</th></tr></thead>
-                    <tbody>
-                        <tr><td>Lettre</td><td>< 100g</td><td><strong>4.50 €</strong></td></tr>
-                        <tr><td>Petit Colis</td><td>< 1kg</td><td><strong>12.90 €</strong></td></tr>
-                        <tr><td>Moyen Colis</td><td>< 5kg</td><td><strong>19.90 €</strong></td></tr>
-                    </tbody>
-                </table>
+        <div id="tab-tarifs" class="tab-section text-center">
+            <div class="card card-luxury p-4">
+                <h3>Tarifs Uniques</h3>
+                <p>Inclut l'anonymisation et la réexpédition.</p>
+                <div class="row mt-4">
+                    <div class="col-4"><h4>4.50€</h4><small>Lettre</small></div>
+                    <div class="col-4"><h4>12.90€</h4><small>Colis Standard</small></div>
+                    <div class="col-4"><h4>29.90€</h4><small>Gros Colis</small></div>
+                </div>
             </div>
         </div>
     </div>
@@ -218,13 +208,13 @@ const firebaseConfig = {
     appId: "1:189746859638:web:abc519c2a17116a32b9957",
     measurementId: "G-8QFN8HSTH8"
 };
-firebase.initializeApp(firebaseConfig);
+try { firebase.initializeApp(firebaseConfig); } catch(e) {}
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// --- AUTH & ROUTING ---
 auth.onAuthStateChanged(user => {
-    if (user) {
+    if(user) {
         document.getElementById('view-login').style.display = 'none';
         document.getElementById('view-dashboard').style.display = 'block';
         document.getElementById('user-email-display').innerText = user.email;
@@ -256,22 +246,21 @@ function switchTab(tabId, btn) {
     if(btn) btn.classList.add('active');
 }
 
-// --- 1. GESTION ADRESSE (PRIVÉE) ---
+function calculatePrice() {
+    const type = document.getElementById('send-type').value;
+    let p = 4.50;
+    if(type.includes("Petit")) p = 12.90;
+    if(type.includes("Gros")) p = 29.90;
+    document.getElementById('price-display').innerText = p.toFixed(2) + " €";
+}
+
 function saveAddress() {
     const user = auth.currentUser;
     if(!user) return;
-    
-    const data = {
+    db.collection('users_addresses').doc(user.uid).set({
         name: document.getElementById('addr-name').value,
-        street: document.getElementById('addr-street').value,
-        zip: document.getElementById('addr-zip').value,
-        city: document.getElementById('addr-city').value,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    
-    db.collection('users_addresses').doc(user.uid).set(data)
-      .then(() => document.getElementById('addr-msg').innerText = "Adresse sauvegardée en lieu sûr !")
-      .catch(e => alert("Erreur : " + e.message));
+        city: document.getElementById('addr-city').value
+    }, { merge: true }).then(() => document.getElementById('addr-msg').innerText = "Adresse OK !");
 }
 
 function loadMyAddress(user) {
@@ -279,122 +268,72 @@ function loadMyAddress(user) {
         if(doc.exists) {
             const d = doc.data();
             document.getElementById('addr-name').value = d.name || '';
-            document.getElementById('addr-street').value = d.street || '';
-            document.getElementById('addr-zip').value = d.zip || '';
             document.getElementById('addr-city').value = d.city || '';
         }
     });
 }
 
-// --- 2. LOGIQUE D'ENVOI (EXPÉDITION) ---
-function calculatePrice() {
-    const type = document.getElementById('send-type').value;
-    let price = 0;
-    
-    // Logique simple de prix (Double affranchissement)
-    if(type === 'lettre') price = 4.50;
-    else if(type === 'colis_s') price = 12.90;
-    else if(type === 'colis_m') price = 19.90;
-    else price = 29.90;
-    
-    document.getElementById('price-display').innerText = price.toFixed(2) + " €";
-}
-
+// --- C'EST ICI QUE TOUT SE JOUE ---
 function processShipment() {
-    const destEmail = document.getElementById('send-dest-email').value;
-    const type = document.getElementById('send-type').value;
+    const dest = document.getElementById('send-dest-email').value;
     const user = auth.currentUser;
     
-    if(!destEmail) return alert("Veuillez entrer l'email du destinataire.");
+    if(!dest) return alert("Email destinataire manquant !");
+    
+    // Génération d'un code aléatoire
+    const trackCode = "GB-" + Math.floor(100000 + Math.random() * 900000);
 
-    // Simulation de paiement
-    if(!confirm("Confirmer le paiement de " + document.getElementById('price-display').innerText + " ?")) return;
+    // 1. On affiche l'étiquette VISUELLEMENT
+    document.getElementById('label-code').innerText = trackCode;
+    document.getElementById('label-sender').innerText = user.email;
+    document.getElementById('label-ref').innerText = dest;
+    document.getElementById('final-label').style.display = 'block'; // On la rend visible
 
-    // Création de l'envoi dans la base de données
+    // 2. On enregistre dans la base
     db.collection('shipments').add({
         sender_uid: user.uid,
         sender_email: user.email,
-        recipient_email: destEmail, // On stocke l'email, la plateforme fera le lien avec l'adresse
-        type: type,
-        status: 'paid', // paid -> hub_received -> forwarding -> delivered
-        created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        tracking_code: "GB-" + Math.floor(Math.random() * 1000000)
-    }).then(() => {
-        alert("✅ Paiement accepté !\n\nÉtiquette générée. Veuillez coller l'étiquette sur votre colis et l'envoyer à notre plateforme centrale.");
-        switchTab('tab-suivi');
-        document.getElementById('send-dest-email').value = '';
-    }).catch(e => alert("Erreur: " + e.message));
+        recipient_email: dest,
+        status: 'paid',
+        tracking_code: trackCode,
+        type: document.getElementById('send-type').value,
+        created_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    alert("Paiement accepté ! Votre étiquette est prête ci-dessous.");
 }
 
-// --- 3. SUIVI (SENDER & RECIPIENT) ---
 function loadShipments(user) {
-    // 1. Ce que j'ai envoyé
+    // Liste des envois (Expéditeur)
     db.collection('shipments').where('sender_uid', '==', user.uid)
       .orderBy('created_at', 'desc')
       .onSnapshot(snap => {
           let html = '';
-          if(snap.empty) html = '<div class="text-muted p-3">Aucun envoi effectué.</div>';
           snap.forEach(doc => {
-              const d = doc.data();
-              const date = d.created_at ? new Date(d.created_at.seconds*1000).toLocaleDateString() : '';
-              html += `
-              <div class="list-group-item">
-                <div class="d-flex justify-content-between">
-                    <strong>Vers: ${d.recipient_email}</strong>
-                    <span class="badge bg-primary">${d.tracking_code}</span>
-                </div>
-                <div class="mt-2">
-                    ${getStatusBadge(d.status)}
-                </div>
-                <small class="text-muted">Créé le ${date}</small>
-              </div>`;
+             const d = doc.data();
+             html += `<div class="list-group-item">
+                <strong>Vers ${d.recipient_email}</strong><br>
+                Code: ${d.tracking_code} <span class="badge bg-secondary">${d.status}</span>
+             </div>`;
           });
-          document.getElementById('list-sent').innerHTML = html;
+          document.getElementById('list-sent').innerHTML = html || "Rien envoyé.";
       });
 
-    // 2. Ce que je reçois (Basé sur mon email)
+    // Liste des réceptions (Destinataire)
     db.collection('shipments').where('recipient_email', '==', user.email)
       .orderBy('created_at', 'desc')
       .onSnapshot(snap => {
           let html = '';
-          if(snap.empty) html = '<div class="text-muted p-3">Aucune réception en attente.</div>';
           snap.forEach(doc => {
-              const d = doc.data();
-              html += `
-              <div class="list-group-item border-start border-4 border-warning">
-                <div class="d-flex justify-content-between">
-                    <strong>De: ${d.sender_email}</strong>
-                    <span class="badge bg-dark">${d.type}</span>
-                </div>
-                <p class="mb-1 small">Le colis transite via notre plateforme.</p>
-                ${getStatusBadge(d.status)}
-                
-                <button onclick="advanceStatus('${doc.id}', '${d.status}')" class="btn btn-xs btn-outline-secondary mt-2" style="font-size:0.7rem">
-                   [Simuler Avancement Plateforme]
-                </button>
-              </div>`;
+             const d = doc.data();
+             html += `<div class="list-group-item border-warning border-start border-3">
+                <strong>De: ${d.sender_email}</strong><br>
+                Code: ${d.tracking_code} <span class="badge bg-primary">${d.status}</span>
+             </div>`;
           });
-          document.getElementById('list-received').innerHTML = html;
+          document.getElementById('list-received').innerHTML = html || "Rien à recevoir.";
       });
 }
-
-function getStatusBadge(status) {
-    if(status === 'paid') return '<span class="badge bg-secondary">En attente envoi expéditeur</span>';
-    if(status === 'hub_received') return '<span class="badge bg-info">Reçu Plateforme (Réétiquetage)</span>';
-    if(status === 'forwarded') return '<span class="badge bg-warning text-dark">Réexpédié vers Vous</span>';
-    if(status === 'delivered') return '<span class="badge bg-success">Livré</span>';
-    return status;
-}
-
-// Fonction de test pour faire avancer le statut du colis
-function advanceStatus(docId, currentStatus) {
-    let next = 'hub_received';
-    if(currentStatus === 'hub_received') next = 'forwarded';
-    if(currentStatus === 'forwarded') next = 'delivered';
-    
-    db.collection('shipments').doc(docId).update({ status: next });
-}
-
 </script>
 </body>
 </html>
