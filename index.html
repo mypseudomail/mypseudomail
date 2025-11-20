@@ -3,271 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPseudoMail - Espace Membre</title>
+    <title>GhostBox - Relais Postal Anonyme</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- DESIGN LUXE ROUGE & OR --- */
-        :root {
-            --luxe-red: #8B0000;
-            --luxe-gold: #B8860B;
-            --bg-light: #f8f9fa;
-        }
-        body { 
-            background-color: var(--bg-light); 
-            font-family: 'Segoe UI', sans-serif; 
-        }
-
-        /* Cacher les éléments au chargement pour éviter l'effet "vrac" */
+        :root { --luxe-red: #8B0000; --luxe-gold: #B8860B; --bg-light: #f4f6f9; }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; }
+        
+        /* Masquer les vues au chargement */
         #view-dashboard, .tab-section { display: none; }
         #view-login { display: block; }
 
-        /* Boutons et Textes */
+        /* Couleurs */
         .text-red { color: var(--luxe-red) !important; }
         .text-gold { color: var(--luxe-gold) !important; }
-        .btn-gold {
-            background: linear-gradient(45deg, var(--luxe-gold), #cf9e10);
-            color: white; border: none; font-weight: bold; transition: 0.3s;
-        }
-        .btn-gold:hover { transform: translateY(-2px); color: white; box-shadow: 0 5px 15px rgba(184, 134, 11, 0.3); }
+        .bg-red { background-color: var(--luxe-red) !important; }
         
+        /* Boutons Dorés */
+        .btn-gold {
+            background: linear-gradient(45deg, var(--luxe-gold), #d4af37);
+            color: white; border: none; font-weight: bold; box-shadow: 0 4px 10px rgba(184,134,11,0.3);
+        }
+        .btn-gold:hover { transform: translateY(-2px); color: white; }
+
         /* Cartes */
         .card-luxury {
-            border: none; border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            background: white; overflow: hidden;
+            border: none; border-radius: 12px; background: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08); overflow: hidden;
         }
         .card-header-luxury {
             background: var(--luxe-red); color: white; padding: 15px;
-            border-bottom: 3px solid var(--luxe-gold); text-align: center;
+            border-bottom: 4px solid var(--luxe-gold);
         }
 
-        /* Navigation des onglets */
-        .nav-pills .nav-link {
-            color: #555; font-weight: 600; margin-right: 5px;
-            border-radius: 8px; transition: all 0.3s;
-        }
-        .nav-pills .nav-link.active {
-            background-color: var(--luxe-red);
-            color: var(--luxe-gold);
-            border-bottom: 2px solid var(--luxe-gold);
-        }
-        .nav-pills .nav-link:hover:not(.active) {
-            background-color: #e9ecef; color: var(--luxe-red);
-        }
-
-        /* Animation d'apparition */
-        .tab-section.active { display: block; animation: fadeIn 0.4s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Email Item */
-        .email-item { border-left: 4px solid transparent; cursor: pointer; transition: 0.2s; }
-        .email-item:hover { background-color: #fffdf5; border-left: 4px solid var(--luxe-gold); }
+        /* Navigation */
+        .nav-pills .nav-link.active { background-color: var(--luxe-red); border-bottom: 2px solid var(--luxe-gold); }
+        .nav-pills .nav-link { color: #555; font-weight: 600; }
+        
+        /* Étapes de suivi */
+        .timeline-step { font-size: 0.8rem; color: #888; border-left: 2px solid #ddd; padding-left: 15px; margin-left: 5px; }
+        .timeline-step.active { color: var(--luxe-red); border-color: var(--luxe-gold); font-weight: bold; }
+        
+        /* Animation */
+        .tab-section.active { display: block; animation: slideIn 0.4s; }
+        @keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="view-login" class="container py-5" style="max-width: 900px;">
     <div class="text-center mb-5">
-        <h1 class="display-4 text-red fw-bold"><i class="fas fa-envelope-open-text text-gold"></i> MyPseudoMail</h1>
-        <p class="lead text-muted">Accédez à votre espace sécurisé.</p>
-        <div id="auth-error" class="alert alert-danger d-none mt-3"></div>
+        <h1 class="display-4 text-red fw-bold"><i class="fas fa-box-open text-gold"></i> GhostBox</h1>
+        <p class="lead text-muted">La plateforme de relais postal 100% anonyme.</p>
     </div>
-
     <div class="row g-4">
         <div class="col-md-6">
             <div class="card card-luxury h-100">
-                <div class="card-header-luxury"><h4><i class="fas fa-user-plus"></i> Créer un compte</h4></div>
+                <div class="card-header-luxury text-center"><h4>Inscription</h4></div>
                 <div class="card-body p-4">
-                    <p class="small text-muted text-center">Nouveau ici ? Commencez par créer vos accès.</p>
-                    <input type="email" id="reg-email" class="form-control mb-3" placeholder="Votre Email">
-                    <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Mot de passe (6+ car.)">
-                    <button onclick="handleRegister()" class="btn btn-gold w-100">S'INSCRIRE GRATUITEMENT</button>
+                    <input type="email" id="reg-email" class="form-control mb-3" placeholder="Email">
+                    <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Mot de passe">
+                    <button onclick="handleRegister()" class="btn btn-gold w-100">Créer un compte</button>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card card-luxury h-100">
                 <div class="card-body p-5 text-center">
-                    <h4 class="text-red mb-4">Déjà membre ?</h4>
-                    <input type="email" id="login-email" class="form-control mb-3" placeholder="Votre Email">
-                    <input type="password" id="login-pass" class="form-control mb-3" placeholder="Votre Mot de passe">
-                    <button onclick="handleLogin()" class="btn btn-outline-danger w-100 mb-3">SE CONNECTER</button>
-                    <hr>
-                    <button onclick="loginAnonymous()" class="btn btn-sm btn-light w-100">Tester en Mode Invité</button>
+                    <h4 class="text-red mb-3">Connexion</h4>
+                    <input type="email" id="login-email" class="form-control mb-3" placeholder="Email">
+                    <input type="password" id="login-pass" class="form-control mb-3" placeholder="Mot de passe">
+                    <button onclick="handleLogin()" class="btn btn-outline-danger w-100">Se connecter</button>
                 </div>
             </div>
         </div>
     </div>
+    <div id="auth-error" class="alert alert-danger d-none mt-3 text-center"></div>
 </div>
 
-<div id="view-dashboard" class="container-fluid px-0">
-    
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 py-3 sticky-top">
+<div id="view-dashboard">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
         <div class="container">
-            <a class="navbar-brand text-red fw-bold" href="#"><i class="fas fa-envelope text-gold"></i> MyPseudoMail</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto nav-pills">
-                    <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-donnees', this)">Mes Données</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-produits', this)">Produits</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-tarifs', this)">Tarifications</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-guide', this)">Guide</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-faq', this)">FAQ</a></li>
-                </ul>
-                <div class="d-flex align-items-center mt-3 mt-lg-0">
-                    <span class="badge bg-warning text-dark me-3" id="user-badge">Membre</span>
-                    <button onclick="handleLogout()" class="btn btn-sm btn-outline-dark">Déconnexion</button>
-                </div>
+            <a class="navbar-brand text-red fw-bold" href="#"><i class="fas fa-shipping-fast text-gold"></i> GhostBox</a>
+            <div class="d-flex align-items-center">
+                <span class="badge bg-warning text-dark me-3" id="user-email-display">...</span>
+                <button onclick="auth.signOut()" class="btn btn-sm btn-outline-dark">Déconnexion</button>
             </div>
         </div>
     </nav>
 
-    <div class="container py-5" style="max-width: 1000px;">
-        
-        <div id="tab-donnees" class="tab-section active">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="card card-luxury p-4 text-center">
-                        <div class="mb-3"><i class="fas fa-user-circle fa-4x text-gold"></i></div>
-                        <h5 id="profile-email">Chargement...</h5>
-                        <p class="text-muted small mb-3">ID: <span id="profile-uid">...</span></p>
-                        <button onclick="simulateIncomingEmail()" class="btn btn-gold w-100">
-                            <i class="fas fa-magic"></i> Simuler Réception Email
-                        </button>
-                    </div>
-                </div>
+    <div class="container py-4">
+        <ul class="nav nav-pills mb-4 justify-content-center">
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-expedier', this)">📦 Expédier un Colis</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-suivi', this)">📡 Suivi / Réception</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-adresse', this)">🏠 Mon Adresse Réelle</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-tarifs', this)">💰 Tarifs</a></li>
+        </ul>
+
+        <div id="tab-expedier" class="tab-section active">
+            <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="card card-luxury">
-                        <div class="card-header-luxury py-2"><h5 class="m-0">Boîte de Réception</h5></div>
-                        <div id="inbox-list" class="list-group list-group-flush" style="min-height: 300px;">
-                            <div class="p-5 text-center text-muted">Chargement des messages...</div>
+                        <div class="card-header-luxury"><h5>Nouvel Envoi Sécurisé</h5></div>
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                <label class="fw-bold text-red">1. Destinataire (Membre GhostBox)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user-secret"></i></span>
+                                    <input type="email" id="send-dest-email" class="form-control" placeholder="Email du destinataire">
+                                </div>
+                                <small class="text-muted">Nous vérifierons s'il est inscrit. Son adresse restera masquée.</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="fw-bold text-red">2. Caractéristiques</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <select class="form-select" id="send-type" onchange="calculatePrice()">
+                                            <option value="lettre">✉️ Lettre (-100g)</option>
+                                            <option value="colis_s">📦 Petit Colis (-1kg)</option>
+                                            <option value="colis_m">📦 Moyen Colis (-5kg)</option>
+                                            <option value="colis_l">📦 Gros Colis (+5kg)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" id="send-weight" class="form-control" placeholder="Poids (grammes)" oninput="calculatePrice()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-warning border-warning">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Total à payer :</strong>
+                                        <div class="small text-muted">
+                                            1. Transport vers Plateforme<br>
+                                            2. Réexpédition vers Destinataire
+                                        </div>
+                                    </div>
+                                    <h2 class="text-red mb-0" id="price-display">0.00 €</h2>
+                                </div>
+                            </div>
+
+                            <button onclick="processShipment()" class="btn btn-gold w-100 py-3 fs-5">
+                                <i class="fas fa-print"></i> Payer & Générer l'Étiquette
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="tab-produits" class="tab-section">
-            <h2 class="text-red mb-4 border-bottom pb-2">Nos Produits Exclusifs</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card card-luxury h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-shield-alt fa-3x text-gold mb-3"></i>
-                            <h5 class="card-title text-red">VPN Gold</h5>
-                            <p class="card-text">Naviguez en anonymat total avec notre tunnel crypté militaire.</p>
-                            <button class="btn btn-outline-danger btn-sm">Découvrir</button>
-                        </div>
+        <div id="tab-suivi" class="tab-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-red mb-3">📤 J'ai envoyé</h5>
+                    <div id="list-sent" class="list-group">Chargement...</div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-red mb-3">📥 Je vais recevoir</h5>
+                    <div id="list-received" class="list-group">Chargement...</div>
+                    <div class="alert alert-info mt-3 small">
+                        <i class="fas fa-info-circle"></i> Vous devez avoir renseigné votre adresse dans l'onglet "Mon Adresse" pour recevoir.
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card card-luxury h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-mail-bulk fa-3x text-gold mb-3"></i>
-                            <h5 class="card-title text-red">PseudoMail Pro</h5>
-                            <p class="card-text">Adresses illimitées et stockage permanent pour vos affaires.</p>
-                            <button class="btn btn-outline-danger btn-sm">Découvrir</button>
-                        </div>
-                    </div>
+            </div>
+        </div>
+
+        <div id="tab-adresse" class="tab-section">
+            <div class="card card-luxury p-4" style="max-width: 600px; margin: auto;">
+                <h4 class="text-red mb-3"><i class="fas fa-map-marker-alt"></i> Mon Adresse de Livraison</h4>
+                <p class="text-muted">Ces données sont chiffrées et visibles UNIQUEMENT par la plateforme GhostBox pour la réexpédition. Aucun expéditeur ne verra ceci.</p>
+                
+                <div class="mb-2"><input type="text" id="addr-name" class="form-control" placeholder="Nom complet"></div>
+                <div class="mb-2"><input type="text" id="addr-street" class="form-control" placeholder="Numéro et Rue"></div>
+                <div class="row mb-3">
+                    <div class="col-4"><input type="text" id="addr-zip" class="form-control" placeholder="Code Postal"></div>
+                    <div class="col-8"><input type="text" id="addr-city" class="form-control" placeholder="Ville"></div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card card-luxury h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-cloud fa-3x text-gold mb-3"></i>
-                            <h5 class="card-title text-red">Coffre-Fort Cloud</h5>
-                            <p class="card-text">Stockez vos documents sensibles dans un espace inviolable.</p>
-                            <button class="btn btn-outline-danger btn-sm">Découvrir</button>
-                        </div>
-                    </div>
-                </div>
+                <button onclick="saveAddress()" class="btn btn-gold w-100">Enregistrer mes coordonnées</button>
+                <div id="addr-msg" class="mt-2 text-center text-success fw-bold"></div>
             </div>
         </div>
 
         <div id="tab-tarifs" class="tab-section">
-            <div class="text-center mb-5">
-                <h2 class="text-red">Nos Offres</h2>
-                <p class="text-muted">Choisissez l'élégance qui vous convient.</p>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-md-4">
-                    <div class="card card-luxury mb-4">
-                        <div class="card-header bg-light py-3 text-center"><h4>Gratuit</h4></div>
-                        <div class="card-body text-center">
-                            <h1 class="text-gold">0€<small class="fs-6 text-muted">/mois</small></h1>
-                            <ul class="list-unstyled mt-3 mb-4">
-                                <li>1 Adresse Email</li>
-                                <li>Réception Standard</li>
-                                <li>Pubs incluses</li>
-                            </ul>
-                            <button class="btn btn-outline-dark w-100">Actuel</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card card-luxury mb-4 border-warning">
-                        <div class="card-header-luxury py-3"><h4>Gold Member</h4></div>
-                        <div class="card-body text-center">
-                            <h1 class="text-gold">9.99€<small class="fs-6 text-muted">/mois</small></h1>
-                            <ul class="list-unstyled mt-3 mb-4">
-                                <li>Adresses Illimitées</li>
-                                <li>Zéro Publicité</li>
-                                <li>Support VIP 24/7</li>
-                            </ul>
-                            <button class="btn btn-gold w-100">Passer Premium</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="card card-luxury p-4 text-center">
+                <h3 class="text-red">Double Affranchissement Inclus</h3>
+                <p>Nous calculons automatiquement le coût de l'envoi vers notre Hub + la réexpédition chez votre correspondant.</p>
+                <table class="table mt-4">
+                    <thead class="table-light"><tr><th>Type</th><th>Poids</th><th>Tarif Total</th></tr></thead>
+                    <tbody>
+                        <tr><td>Lettre</td><td>< 100g</td><td><strong>4.50 €</strong></td></tr>
+                        <tr><td>Petit Colis</td><td>< 1kg</td><td><strong>12.90 €</strong></td></tr>
+                        <tr><td>Moyen Colis</td><td>< 5kg</td><td><strong>19.90 €</strong></td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-
-        <div id="tab-guide" class="tab-section">
-            <div class="card card-luxury p-5">
-                <h2 class="text-red mb-4">Guide d'utilisation</h2>
-                <h5>1. Comment recevoir un email ?</h5>
-                <p class="text-muted">Votre boîte de réception dans l'onglet "Mes Données" écoute en temps réel. Dès qu'un mail arrive sur nos serveurs pour votre ID, il s'affiche.</p>
-                <hr>
-                <h5>2. Est-ce anonyme ?</h5>
-                <p class="text-muted">Oui. Si vous utilisez le mode invité, aucune trace n'est conservée après déconnexion.</p>
-                <hr>
-                <h5>3. Comment simuler un test ?</h5>
-                <p class="text-muted">Cliquez sur le bouton doré "Simuler Réception" dans votre profil pour vérifier que la connexion fonctionne.</p>
-            </div>
-        </div>
-
-        <div id="tab-faq" class="tab-section">
-            <h2 class="text-red mb-4">Foire Aux Questions</h2>
-            <div class="accordion" id="faqAccordion">
-                <div class="accordion-item border-0 mb-2 shadow-sm rounded">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">Mes emails sont-ils privés ?</button></h2>
-                    <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">Absolument. Seul votre identifiant unique (UID) a le droit de lecture sur vos documents dans la base Firestore.</div>
-                    </div>
-                </div>
-                <div class="accordion-item border-0 mb-2 shadow-sm rounded">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">Puis-je supprimer mon compte ?</button></h2>
-                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">Oui, contactez le support ou utilisez le bouton de suppression dans les paramètres avancés (bientôt disponible).</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-  // 1. CONFIGURATION
-  const firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
     authDomain: "mypseudomail-9d093.firebaseapp.com",
     projectId: "mypseudomail-9d093",
@@ -275,134 +217,184 @@
     messagingSenderId: "189746859638",
     appId: "1:189746859638:web:abc519c2a17116a32b9957",
     measurementId: "G-8QFN8HSTH8"
-  };
-  
-  try { firebase.initializeApp(firebaseConfig); } catch(e) { console.error(e); }
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  let inboxUnsubscribe = null;
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-  // 2. GESTION DE L'AFFICHAGE (ROUTING)
-  auth.onAuthStateChanged((user) => {
-      if (user) {
-          // CONNECTÉ -> Afficher Dashboard
-          document.getElementById('view-login').style.display = 'none';
-          document.getElementById('view-dashboard').style.display = 'block';
-          setupUserProfile(user);
-          switchTab('tab-donnees'); 
-      } else {
-          // DÉCONNECTÉ -> Afficher Login
-          document.getElementById('view-login').style.display = 'block';
-          document.getElementById('view-dashboard').style.display = 'none';
-          if(inboxUnsubscribe) inboxUnsubscribe();
-      }
-  });
+// --- AUTH & ROUTING ---
+auth.onAuthStateChanged(user => {
+    if (user) {
+        document.getElementById('view-login').style.display = 'none';
+        document.getElementById('view-dashboard').style.display = 'block';
+        document.getElementById('user-email-display').innerText = user.email;
+        loadMyAddress(user);
+        loadShipments(user);
+    } else {
+        document.getElementById('view-login').style.display = 'block';
+        document.getElementById('view-dashboard').style.display = 'none';
+    }
+});
 
-  // 3. LOGIQUE DES ONGLETS
-  window.switchTab = function(tabId, navElement) {
-      document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      if(navElement) {
-          document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-          navElement.classList.add('active');
-      }
-  }
+function handleRegister() {
+    const email = document.getElementById('reg-email').value;
+    const pass = document.getElementById('reg-pass').value;
+    if(pass.length < 6) return alert("Mot de passe trop court");
+    auth.createUserWithEmailAndPassword(email, pass).catch(e => alert(e.message));
+}
 
-  // 4. FONCTIONS UTILISATEUR
-  function setupUserProfile(user) {
-      const emailDisplay = user.isAnonymous ? "Invité Anonyme" : user.email;
-      document.getElementById('profile-email').innerText = emailDisplay;
-      document.getElementById('profile-uid').innerText = user.uid.substring(0, 10) + "...";
-      document.getElementById('user-badge').innerText = user.isAnonymous ? "Invité" : "Membre Gold";
+function handleLogin() {
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-pass').value;
+    auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
+}
 
-      const listDiv = document.getElementById('inbox-list');
-      if(inboxUnsubscribe) inboxUnsubscribe(); 
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+}
 
-      inboxUnsubscribe = db.collection('emails')
-        .where('to_uid', '==', user.uid)
-        .orderBy('timestamp', 'desc')
-        .onSnapshot((snapshot) => {
-            if (snapshot.empty) {
-                listDiv.innerHTML = '<div class="p-5 text-center text-muted"><i class="fas fa-inbox fa-2x mb-3"></i><br>Aucun message.</div>';
-                return;
-            }
-            let html = '';
-            snapshot.forEach(doc => {
-                const mail = doc.data();
-                const date = mail.timestamp ? new Date(mail.timestamp.seconds * 1000).toLocaleTimeString() : '';
-                html += `
-                <div class="list-group-item email-item p-3 border-bottom">
-                    <div class="d-flex justify-content-between">
-                        <h6 class="text-red mb-1 fw-bold">${mail.subject || 'Sans objet'}</h6>
-                        <small class="text-muted">${date}</small>
-                    </div>
-                    <div class="small text-gold mb-1">De: ${mail.from}</div>
-                    <p class="mb-0 text-dark small">${mail.body}</p>
-                </div>`;
-            });
-            listDiv.innerHTML = html;
-        });
-  }
+// --- 1. GESTION ADRESSE (PRIVÉE) ---
+function saveAddress() {
+    const user = auth.currentUser;
+    if(!user) return;
+    
+    const data = {
+        name: document.getElementById('addr-name').value,
+        street: document.getElementById('addr-street').value,
+        zip: document.getElementById('addr-zip').value,
+        city: document.getElementById('addr-city').value,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    db.collection('users_addresses').doc(user.uid).set(data)
+      .then(() => document.getElementById('addr-msg').innerText = "Adresse sauvegardée en lieu sûr !")
+      .catch(e => alert("Erreur : " + e.message));
+}
 
-  // 5. AUTH ACTIONS
-  function handleRegister() {
-      const email = document.getElementById('reg-email').value;
-      const pass = document.getElementById('reg-pass').value;
-      
-      if(!email || !pass) return showError("Veuillez remplir tous les champs.");
-      if(pass.length < 6) return showError("Mot de passe trop court (6 car. min).");
-      
-      auth.createUserWithEmailAndPassword(email, pass)
-          .catch(e => {
-              if(e.code === 'auth/email-already-in-use') showError("Cet email est déjà utilisé. Essayez de vous connecter à droite.");
-              else showError(e.message);
+function loadMyAddress(user) {
+    db.collection('users_addresses').doc(user.uid).get().then(doc => {
+        if(doc.exists) {
+            const d = doc.data();
+            document.getElementById('addr-name').value = d.name || '';
+            document.getElementById('addr-street').value = d.street || '';
+            document.getElementById('addr-zip').value = d.zip || '';
+            document.getElementById('addr-city').value = d.city || '';
+        }
+    });
+}
+
+// --- 2. LOGIQUE D'ENVOI (EXPÉDITION) ---
+function calculatePrice() {
+    const type = document.getElementById('send-type').value;
+    let price = 0;
+    
+    // Logique simple de prix (Double affranchissement)
+    if(type === 'lettre') price = 4.50;
+    else if(type === 'colis_s') price = 12.90;
+    else if(type === 'colis_m') price = 19.90;
+    else price = 29.90;
+    
+    document.getElementById('price-display').innerText = price.toFixed(2) + " €";
+}
+
+function processShipment() {
+    const destEmail = document.getElementById('send-dest-email').value;
+    const type = document.getElementById('send-type').value;
+    const user = auth.currentUser;
+    
+    if(!destEmail) return alert("Veuillez entrer l'email du destinataire.");
+
+    // Simulation de paiement
+    if(!confirm("Confirmer le paiement de " + document.getElementById('price-display').innerText + " ?")) return;
+
+    // Création de l'envoi dans la base de données
+    db.collection('shipments').add({
+        sender_uid: user.uid,
+        sender_email: user.email,
+        recipient_email: destEmail, // On stocke l'email, la plateforme fera le lien avec l'adresse
+        type: type,
+        status: 'paid', // paid -> hub_received -> forwarding -> delivered
+        created_at: firebase.firestore.FieldValue.serverTimestamp(),
+        tracking_code: "GB-" + Math.floor(Math.random() * 1000000)
+    }).then(() => {
+        alert("✅ Paiement accepté !\n\nÉtiquette générée. Veuillez coller l'étiquette sur votre colis et l'envoyer à notre plateforme centrale.");
+        switchTab('tab-suivi');
+        document.getElementById('send-dest-email').value = '';
+    }).catch(e => alert("Erreur: " + e.message));
+}
+
+// --- 3. SUIVI (SENDER & RECIPIENT) ---
+function loadShipments(user) {
+    // 1. Ce que j'ai envoyé
+    db.collection('shipments').where('sender_uid', '==', user.uid)
+      .orderBy('created_at', 'desc')
+      .onSnapshot(snap => {
+          let html = '';
+          if(snap.empty) html = '<div class="text-muted p-3">Aucun envoi effectué.</div>';
+          snap.forEach(doc => {
+              const d = doc.data();
+              const date = d.created_at ? new Date(d.created_at.seconds*1000).toLocaleDateString() : '';
+              html += `
+              <div class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <strong>Vers: ${d.recipient_email}</strong>
+                    <span class="badge bg-primary">${d.tracking_code}</span>
+                </div>
+                <div class="mt-2">
+                    ${getStatusBadge(d.status)}
+                </div>
+                <small class="text-muted">Créé le ${date}</small>
+              </div>`;
           });
-  }
-  
-  function handleLogin() {
-      const email = document.getElementById('login-email').value;
-      const pass = document.getElementById('login-pass').value;
-      
-      if(!email || !pass) return showError("Veuillez remplir email et mot de passe.");
-
-      auth.signInWithEmailAndPassword(email, pass)
-          .catch(e => {
-              if(e.code === 'auth/user-not-found' || e.code === 'auth/invalid-login-credentials') {
-                  showError("Compte introuvable ! Créez d'abord un compte dans la case de GAUCHE.");
-              } else if (e.code === 'auth/wrong-password') {
-                  showError("Mot de passe incorrect.");
-              } else {
-                  showError("Erreur: " + e.message);
-              }
-          });
-  }
-
-  function loginAnonymous() {
-      auth.signInAnonymously().catch(e => showError(e.message));
-  }
-
-  function handleLogout() {
-      auth.signOut();
-  }
-
-  function showError(msg) {
-      const div = document.getElementById('auth-error');
-      div.innerText = msg; 
-      div.classList.remove('d-none');
-      setTimeout(() => div.classList.add('d-none'), 8000);
-  }
-
-  window.simulateIncomingEmail = function() {
-      if(!auth.currentUser) return;
-      db.collection('emails').add({
-          to_uid: auth.currentUser.uid,
-          from: "support@mypseudomail.com",
-          subject: "Test de réception réussi",
-          body: "Votre interface est maintenant parfaitement configurée.",
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          document.getElementById('list-sent').innerHTML = html;
       });
-  };
-</script>
 
+    // 2. Ce que je reçois (Basé sur mon email)
+    db.collection('shipments').where('recipient_email', '==', user.email)
+      .orderBy('created_at', 'desc')
+      .onSnapshot(snap => {
+          let html = '';
+          if(snap.empty) html = '<div class="text-muted p-3">Aucune réception en attente.</div>';
+          snap.forEach(doc => {
+              const d = doc.data();
+              html += `
+              <div class="list-group-item border-start border-4 border-warning">
+                <div class="d-flex justify-content-between">
+                    <strong>De: ${d.sender_email}</strong>
+                    <span class="badge bg-dark">${d.type}</span>
+                </div>
+                <p class="mb-1 small">Le colis transite via notre plateforme.</p>
+                ${getStatusBadge(d.status)}
+                
+                <button onclick="advanceStatus('${doc.id}', '${d.status}')" class="btn btn-xs btn-outline-secondary mt-2" style="font-size:0.7rem">
+                   [Simuler Avancement Plateforme]
+                </button>
+              </div>`;
+          });
+          document.getElementById('list-received').innerHTML = html;
+      });
+}
+
+function getStatusBadge(status) {
+    if(status === 'paid') return '<span class="badge bg-secondary">En attente envoi expéditeur</span>';
+    if(status === 'hub_received') return '<span class="badge bg-info">Reçu Plateforme (Réétiquetage)</span>';
+    if(status === 'forwarded') return '<span class="badge bg-warning text-dark">Réexpédié vers Vous</span>';
+    if(status === 'delivered') return '<span class="badge bg-success">Livré</span>';
+    return status;
+}
+
+// Fonction de test pour faire avancer le statut du colis
+function advanceStatus(docId, currentStatus) {
+    let next = 'hub_received';
+    if(currentStatus === 'hub_received') next = 'forwarded';
+    if(currentStatus === 'forwarded') next = 'delivered';
+    
+    db.collection('shipments').doc(docId).update({ status: next });
+}
+
+</script>
 </body>
 </html>
