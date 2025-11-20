@@ -1,96 +1,55 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPseudoMail - Debug Mode</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root { --luxe-red: #8B0000; --luxe-gold: #B8860B; }
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        
-        /* VUES */
-        #view-dashboard { display: none; }
-        
-        /* STYLES */
-        .btn-gold { background: var(--luxe-gold); color: white; border: none; font-weight: bold; }
-        .btn-gold:hover { background: #9A7009; color: white; }
-        .card-luxury { border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .nav-link.active { background-color: var(--luxe-red) !important; color: white !important; }
-        .nav-link { color: var(--luxe-red); }
-        .tab-section { display: none; }
-        .tab-section.active { display: block; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    </style>
-</head>
-<body>
-
-<div id="view-login" class="container py-5">
-    <div class="text-center mb-4">
-        <h2 class="text-danger"><i class="fas fa-bug"></i> Mode Diagnostic</h2>
-        <p>Si une fenêtre s'ouvre quand vous cliquez, lisez le message !</p>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-md-5 mb-3">
-            <div class="card card-luxury p-4">
-                <h4>1. S'inscrire d'abord</h4>
-                <input type="email" id="reg-email" class="form-control mb-2" placeholder="Email">
-                <input type="password" id="reg-pass" class="form-control mb-2" placeholder="Mot de passe">
-                <button onclick="handleRegister()" class="btn btn-gold w-100">Créer Compte</button>
+                    <p class="small text-muted text-center">Nouveau ici ? Commencez par créer vos accès.</p>
+                    <input type="email" id="reg-email" class="form-control mb-3" placeholder="Votre Email">
+                    <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Mot de passe (6+ car.)">
+                    <button onclick="handleRegister()" class="btn btn-gold w-100">S'INSCRIRE GRATUITEMENT</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-luxury h-100">
+                <div class="card-body p-5 text-center">
+                    <h4 class="text-red mb-4">Déjà membre ?</h4>
+                    <input type="email" id="login-email" class="form-control mb-3" placeholder="Votre Email">
+                    <input type="password" id="login-pass" class="form-control mb-3" placeholder="Votre Mot de passe">
+                    <button onclick="handleLogin()" class="btn btn-outline-danger w-100 mb-3">SE CONNECTER</button>
+                    <hr>
+                    <button onclick="loginAnonymous()" class="btn btn-sm btn-light w-100">Tester en Mode Invité</button>
+                <p class="text-muted">Oui. Si vous utilisez le mode invité, aucune trace n'est conservée après déconnexion.</p>
+                <hr>
+                <h5>3. Comment simuler un test ?</h5>
+                <p class="text-muted">Cliquez sur le bouton doré "Simuler Réception" dans votre profil pour vérifier que la connexion fonctionne.</p>
             </div>
         </div>
 
-        <div class="col-md-5">
-            <div class="card card-luxury p-4 border-danger border-2">
-                <h4>2. Se Connecter</h4>
-                <input type="email" id="login-email" class="form-control mb-2" placeholder="Votre Email">
-                <input type="password" id="login-pass" class="form-control mb-2" placeholder="Votre Mot de passe">
-                <button onclick="handleLogin()" class="btn btn-danger w-100">SE CONNECTER (TEST)</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="view-dashboard" class="container-fluid">
-    <nav class="navbar navbar-light bg-white px-4 shadow-sm">
-        <span class="navbar-brand text-danger fw-bold">MyPseudoMail</span>
-        <button onclick="auth.signOut()" class="btn btn-sm btn-outline-dark">Déconnexion</button>
-    </nav>
-
-    <div class="container py-4">
-        <div class="alert alert-success">
-            <h4><i class="fas fa-check-circle"></i> SUCCÈS !</h4>
-            Vous êtes bien connecté. Le système fonctionne.
-            <br>ID: <span id="user-id">...</span>
-        </div>
-
-        <ul class="nav nav-pills mb-3">
-            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-inbox', this)">Boîte Mail</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-produits', this)">Produits</a></li>
-        </ul>
-
-        <div id="tab-inbox" class="tab-section active">
-            <div class="card p-3">
-                <h5>Vos Emails</h5>
-                <div id="inbox-list">Chargement...</div>
-                <button onclick="simulateEmail()" class="btn btn-warning mt-3">Simuler un email</button>
+        <div id="tab-faq" class="tab-section">
+            <h2 class="text-red mb-4">Foire Aux Questions</h2>
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item border-0 mb-2 shadow-sm rounded">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">Mes emails sont-ils privés ?</button></h2>
+                    <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">Absolument. Seul votre identifiant unique (UID) a le droit de lecture sur vos documents dans la base Firestore.</div>
+                    </div>
+                </div>
+                <div class="accordion-item border-0 mb-2 shadow-sm rounded">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">Puis-je supprimer mon compte ?</button></h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">Oui, contactez le support ou utilisez le bouton de suppression dans les paramètres avancés (bientôt disponible).</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div id="tab-produits" class="tab-section">
-            <div class="card p-3"><h5>Nos Produits</h5><p>Contenu des produits ici...</p></div>
-        </div>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-const firebaseConfig = {
+  // 1. CONFIGURATION
+  const firebaseConfig = {
     apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
     authDomain: "mypseudomail-9d093.firebaseapp.com",
     projectId: "mypseudomail-9d093",
@@ -98,107 +57,139 @@ const firebaseConfig = {
     messagingSenderId: "189746859638",
     appId: "1:189746859638:web:abc519c2a17116a32b9957",
     measurementId: "G-8QFN8HSTH8"
-};
+  };
+  
+  try { firebase.initializeApp(firebaseConfig); } catch(e) { console.error(e); }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  let inboxUnsubscribe = null;
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+  // 2. GESTION DE L'AFFICHAGE (ROUTING)
+  auth.onAuthStateChanged((user) => {
+      if (user) {
+          // CONNECTÉ -> Afficher Dashboard
+          document.getElementById('view-login').style.display = 'none';
+          document.getElementById('view-dashboard').style.display = 'block';
+          setupUserProfile(user);
+          // Par défaut, ouvrir l'onglet "Mes Données"
+          switchTab('tab-donnees'); 
+      } else {
+          // DÉCONNECTÉ -> Afficher Login
+          document.getElementById('view-login').style.display = 'block';
+          document.getElementById('view-dashboard').style.display = 'none';
+          if(inboxUnsubscribe) inboxUnsubscribe();
+      }
+  });
 
-// --- 1. GESTION AFFICHAGE ---
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        console.log("Connecté !");
-        document.getElementById('view-login').style.display = 'none';
-        document.getElementById('view-dashboard').style.display = 'block';
-        document.getElementById('user-id').innerText = user.email;
-        listenInbox(user);
-    } else {
-        console.log("Déconnecté");
-        document.getElementById('view-login').style.display = 'block';
-        document.getElementById('view-dashboard').style.display = 'none';
-    }
-});
+  // 3. LOGIQUE DES ONGLETS
+  window.switchTab = function(tabId, navElement) {
+      // Cacher toutes les sections
+      document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+      // Afficher la section demandée
+      document.getElementById(tabId).classList.add('active');
 
-// --- 2. FONCTIONS DE DEBUG ---
+      // Gérer la classe 'active' sur le menu (si clic)
+      if(navElement) {
+          document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+          navElement.classList.add('active');
+      }
+  }
 
-function handleRegister() {
-    const email = document.getElementById('reg-email').value;
-    const pass = document.getElementById('reg-pass').value;
-    
-    if(!email || !pass) return alert("Veuillez remplir Email et Mot de passe !");
+  // 4. FONCTIONS UTILISATEUR
+  function setupUserProfile(user) {
+      const emailDisplay = user.isAnonymous ? "Invité Anonyme" : user.email;
+      document.getElementById('profile-email').innerText = emailDisplay;
+      document.getElementById('profile-uid').innerText = user.uid.substring(0, 10) + "...";
+      document.getElementById('user-badge').innerText = user.isAnonymous ? "Invité" : "Membre Gold";
 
-    alert("Tentative de création de compte pour : " + email + "...\nVeuillez patienter.");
+      // Écoute de la boîte mail (Inbox)
+      const listDiv = document.getElementById('inbox-list');
+      if(inboxUnsubscribe) inboxUnsubscribe(); // Reset previous listener
 
-    auth.createUserWithEmailAndPassword(email, pass)
-        .then(() => {
-            alert("✅ COMPTE CRÉÉ AVEC SUCCÈS !\nVous allez être connecté automatiquement.");
-        })
-        .catch((error) => {
-            alert("❌ ERREUR INSCRIPTION :\n" + error.message);
-        });
-}
-
-function handleLogin() {
-    const email = document.getElementById('login-email').value;
-    const pass = document.getElementById('login-pass').value;
-
-    if(!email || !pass) return alert("Les champs sont vides !");
-
-    // ALERTE DE DEBUG
-    alert("🚀 Envoi de la demande à Firebase pour : " + email);
-
-    auth.signInWithEmailAndPassword(email, pass)
-        .then(() => {
-            // Si ça marche, l'alerte ne s'affichera peut-être pas car la page change vite, 
-            // mais le AuthStateChanged prendra le relais.
-            console.log("Connexion OK");
-        })
-        .catch((error) => {
-            // C'EST ICI QUE VOUS VERREZ LE PROBLÈME
-            alert("❌ ÉCHEC CONNEXION :\nCode: " + error.code + "\nMessage: " + error.message);
-            
-            if(error.code === "auth/operation-not-allowed") {
-                alert("⚠️ SOLUTION : Vous n'avez pas activé 'Email/Password' dans la console Firebase !");
+      inboxUnsubscribe = db.collection('emails')
+        .where('to_uid', '==', user.uid)
+        .orderBy('timestamp', 'desc')
+        .onSnapshot((snapshot) => {
+            if (snapshot.empty) {
+                listDiv.innerHTML = '<div class="p-5 text-center text-muted"><i class="fas fa-inbox fa-2x mb-3"></i><br>Aucun message.</div>';
+                return;
             }
-            if(error.code === "auth/user-not-found") {
-                alert("⚠️ SOLUTION : Cet email n'existe pas. Créez un compte d'abord (encadré de gauche).");
-            }
-            if(error.code === "auth/wrong-password") {
-                alert("⚠️ SOLUTION : Mot de passe incorrect.");
-            }
+            let html = '';
+            snapshot.forEach(doc => {
+                const mail = doc.data();
+                const date = mail.timestamp ? new Date(mail.timestamp.seconds * 1000).toLocaleTimeString() : '';
+                html += `
+                <div class="list-group-item email-item p-3 border-bottom">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="text-red mb-1 fw-bold">${mail.subject || 'Sans objet'}</h6>
+                        <small class="text-muted">${date}</small>
+                    </div>
+                    <div class="small text-gold mb-1">De: ${mail.from}</div>
+                    <p class="mb-0 text-dark small">${mail.body}</p>
+                </div>`;
+            });
+            listDiv.innerHTML = html;
         });
-}
+  }
 
-// --- 3. AUTRES FONCTIONS ---
-function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    if(btn) {
-        document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-    }
-}
+  // 5. AUTH ACTIONS
+  function handleRegister() {
+      const email = document.getElementById('reg-email').value;
+      const pass = document.getElementById('reg-pass').value;
+      
+      if(!email || !pass) return showError("Veuillez remplir tous les champs.");
+      if(pass.length < 6) return showError("Mot de passe trop court (6 car. min).");
+      
+      auth.createUserWithEmailAndPassword(email, pass)
+          .catch(e => {
+              if(e.code === 'auth/email-already-in-use') showError("Cet email est déjà utilisé. Essayez de vous connecter à droite.");
+              else showError(e.message);
+          });
+  }
+  
+  function handleLogin() {
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-pass').value;
+      
+      if(!email || !pass) return showError("Veuillez remplir email et mot de passe.");
 
-function listenInbox(user) {
-    db.collection('emails').where('to_uid', '==', user.uid).orderBy('timestamp', 'desc')
-    .onSnapshot(snap => {
-        let html = '';
-        snap.forEach(doc => {
-            html += `<div class="border-bottom p-2"><b>${doc.data().subject}</b><br>${doc.data().body}</div>`;
-        });
-        document.getElementById('inbox-list').innerHTML = html || "Aucun message.";
-    });
-}
+      auth.signInWithEmailAndPassword(email, pass)
+          .catch(e => {
+              if(e.code === 'auth/user-not-found' || e.code === 'auth/invalid-login-credentials') {
+                  showError("Compte introuvable ! Créez d'abord un compte dans la case de GAUCHE.");
+              } else if (e.code === 'auth/wrong-password') {
+                  showError("Mot de passe incorrect.");
+              } else {
+                  showError("Erreur: " + e.message);
+              }
+          });
+  }
 
-function simulateEmail() {
-    db.collection('emails').add({
-        to_uid: auth.currentUser.uid,
-        from: "test@debug.com",
-        subject: "Test Diagnostic",
-        body: "Ceci prouve que la base de données fonctionne.",
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-}
+  function loginAnonymous() {
+      auth.signInAnonymously().catch(e => showError(e.message));
+  }
+
+  function handleLogout() {
+      auth.signOut();
+  }
+
+  function showError(msg) {
+      const div = document.getElementById('auth-error');
+      div.innerText = msg; 
+      div.classList.remove('d-none');
+      setTimeout(() => div.classList.add('d-none'), 8000);
+  }
+
+  window.simulateIncomingEmail = function() {
+      if(!auth.currentUser) return;
+      db.collection('emails').add({
+          to_uid: auth.currentUser.uid,
+          from: "support@mypseudomail.com",
+          subject: "Test de réception réussi",
+          body: "Si vous lisez ceci, votre onglet 'Mes Données' fonctionne parfaitement.",
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+  };
 </script>
 
 </body>
