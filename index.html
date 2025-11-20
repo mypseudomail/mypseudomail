@@ -16,101 +16,67 @@
         :root {
             --luxe-red: #8B0000;
             --luxe-gold: #B8860B;
-            --luxe-gold-hover: #d4af37;
         }
 
-        /* Styles généraux */
         .text-gold { color: var(--luxe-gold) !important; }
         .text-red { color: var(--luxe-red) !important; }
-        .bg-red { background-color: var(--luxe-red) !important; }
         
+        /* BOUTONS */
         .btn-gold {
             background: linear-gradient(45deg, var(--luxe-gold), #cf9e10);
             color: white;
             border: none;
             font-weight: bold;
-            transition: transform 0.2s;
         }
-        .btn-gold:hover {
-            transform: scale(1.02);
-            color: white;
-            box-shadow: 0 5px 15px rgba(184, 134, 11, 0.4);
-        }
+        .btn-gold:hover { color: white; opacity: 0.9; }
 
-        .btn-outline-red {
-            border: 2px solid var(--luxe-red);
-            color: var(--luxe-red);
-            font-weight: bold;
-        }
-        .btn-outline-red:hover {
-            background-color: var(--luxe-red);
-            color: white;
-        }
-
-        /* CARD STYLE */
+        /* CARTES */
         .card-luxury {
             border: none;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             overflow: hidden;
+            background: white;
         }
         .card-header-luxury {
             background: var(--luxe-red);
             color: white;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             border-bottom: 3px solid var(--luxe-gold);
         }
 
-        /* EMAILS */
-        .email-item {
-            border-left: 4px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .email-item:hover {
-            background-color: #fff8e1; /* Fond doré très clair */
-            border-left: 4px solid var(--luxe-gold);
-            transform: translateX(5px);
-        }
-
-        /* Gestion des Vues (Pages) */
-        .view-section {
-            display: none; /* Caché par défaut */
-            animation: fadeIn 0.5s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* GESTION DES VUES - CORRECTION ECRAN BLANC */
+        /* Par défaut, on affiche le login et on cache le dashboard */
+        #view-dashboard { display: none; }
+        #view-login { display: block; } 
     </style>
 </head>
 <body>
 
-<div id="view-login" class="view-section container py-5" style="max-width: 900px;">
+<div id="view-login" class="container py-5" style="max-width: 900px;">
     <div class="text-center mb-5">
         <h1 class="display-4 text-red fw-bold"><i class="fas fa-envelope-open-text text-gold"></i> MyPseudoMail</h1>
         <p class="lead text-muted">L'élégance de la communication anonyme.</p>
+        <div id="auth-error-msg" class="alert alert-danger d-none"></div>
     </div>
 
     <div class="row g-4">
         <div class="col-md-6">
             <div class="card card-luxury h-100">
                 <div class="card-header-luxury">
-                    <h4><i class="fas fa-user-plus"></i> Créer un Compte</h4>
+                    <h4><i class="fas fa-user-plus"></i> Inscription</h4>
                 </div>
                 <div class="card-body p-4">
                     <div class="mb-3">
                         <label>Email</label>
-                        <input type="email" id="reg-email" class="form-control" placeholder="nouveau@email.com">
+                        <input type="email" id="reg-email" class="form-control" placeholder="email@exemple.com">
                     </div>
                     <div class="mb-3">
-                        <label>Mot de passe (6+ char)</label>
+                        <label>Mot de passe (6+ car.)</label>
                         <input type="password" id="reg-pass" class="form-control" placeholder="******">
                     </div>
-                    <button onclick="handleRegister()" class="btn btn-gold w-100 py-2">S'INSCRIRE GRATUITEMENT</button>
-                    <div id="reg-error" class="text-danger mt-2 text-center small"></div>
+                    <button onclick="handleRegister()" class="btn btn-gold w-100 py-2">CRÉER UN COMPTE</button>
                 </div>
             </div>
         </div>
@@ -125,11 +91,11 @@
                     <div class="mb-3">
                         <input type="password" id="login-pass" class="form-control" placeholder="Votre mot de passe">
                     </div>
-                    <button onclick="handleLogin()" class="btn btn-outline-red w-100 mb-3">SE CONNECTER</button>
+                    <button onclick="handleLogin()" class="btn btn-outline-danger w-100 mb-3">SE CONNECTER</button>
                     
                     <hr>
-                    <button onclick="loginAnonymous()" class="btn btn-light w-100 text-muted">
-                        <i class="fas fa-user-secret"></i> Continuer en Invité
+                    <button onclick="loginAnonymous()" class="btn btn-light w-100 text-muted btn-sm">
+                        <i class="fas fa-user-secret"></i> Continuer en Invité (Anonyme)
                     </button>
                 </div>
             </div>
@@ -137,7 +103,7 @@
     </div>
 </div>
 
-<div id="view-dashboard" class="view-section container py-4" style="max-width: 1000px;">
+<div id="view-dashboard" class="container py-4" style="max-width: 1000px;">
     
     <nav class="navbar navbar-light bg-white shadow-sm rounded mb-4 p-3">
         <div class="container-fluid">
@@ -145,9 +111,9 @@
                 <i class="fas fa-envelope text-gold"></i> Espace Membre
             </span>
             <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-warning text-dark" id="user-display">...</span>
-                <button onclick="handleLogout()" class="btn btn-sm btn-outline-danger">
-                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                <span class="badge bg-warning text-dark" id="user-display">Chargement...</span>
+                <button onclick="handleLogout()" class="btn btn-sm btn-outline-dark">
+                    <i class="fas fa-sign-out-alt"></i> Quitter
                 </button>
             </div>
         </div>
@@ -158,9 +124,9 @@
             <div class="card card-luxury text-center p-4">
                 <i class="fas fa-user-circle fa-4x text-gold mb-3"></i>
                 <h5 id="welcome-msg">Bienvenue</h5>
-                <p class="text-muted small">Votre boîte est sécurisée.</p>
+                <p class="text-muted small">Système prêt.</p>
                 <hr>
-                <button onclick="simulateIncomingEmail()" class="btn btn-dark btn-sm">
+                <button onclick="simulateIncomingEmail()" class="btn btn-dark btn-sm w-100">
                     <i class="fas fa-magic"></i> Simuler réception Email
                 </button>
             </div>
@@ -171,8 +137,8 @@
                 <div class="card-header bg-white border-bottom">
                     <h5 class="mb-0 text-red">Boîte de Réception</h5>
                 </div>
-                <div id="inbox-list" class="list-group list-group-flush" style="min-height: 300px;">
-                    <div class="p-5 text-center text-muted">Chargement...</div>
+                <div id="inbox-list" class="list-group list-group-flush" style="min-height: 200px;">
+                    <div class="p-5 text-center text-muted">En attente de messages...</div>
                 </div>
             </div>
         </div>
@@ -184,7 +150,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // 1. CONFIGURATION
+  // 1. CONFIGURATION (Vos clés sont ici)
   const firebaseConfig = {
     apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
     authDomain: "mypseudomail-9d093.firebaseapp.com",
@@ -195,38 +161,42 @@
     measurementId: "G-8QFN8HSTH8"
   };
 
-  firebase.initializeApp(firebaseConfig);
+  // Initialisation sécurisée
+  try {
+      firebase.initializeApp(firebaseConfig);
+      console.log("Firebase initialisé");
+  } catch (e) {
+      console.error("Erreur Firebase", e);
+      alert("Erreur technique: " + e.message);
+  }
+
   const auth = firebase.auth();
   const db = firebase.firestore();
-  let inboxUnsubscribe = null; // Pour arrêter d'écouter quand on se déconnecte
+  let inboxUnsubscribe = null;
 
-  // 2. GESTION DES VUES (LE COEUR DU SYSTEME)
+  // 2. LOGIQUE DE BASCULEMENT DES PAGES
   auth.onAuthStateChanged((user) => {
       if (user) {
-          // >>> UTILISATEUR CONNECTÉ : Afficher Dashboard
-          showView('view-dashboard');
+          // >>> Si connecté : On cache Login, on affiche Dashboard
+          console.log("Utilisateur connecté:", user.uid);
+          document.getElementById('view-login').style.display = 'none';
+          document.getElementById('view-dashboard').style.display = 'block';
           setupDashboard(user);
       } else {
-          // >>> UTILISATEUR DÉCONNECTÉ : Afficher Login
-          showView('view-login');
-          if(inboxUnsubscribe) inboxUnsubscribe(); // Arrêter l'écoute
+          // >>> Si déconnecté : On affiche Login, on cache Dashboard
+          console.log("Utilisateur déconnecté");
+          document.getElementById('view-login').style.display = 'block';
+          document.getElementById('view-dashboard').style.display = 'none';
+          if(inboxUnsubscribe) inboxUnsubscribe();
       }
   });
 
-  function showView(viewId) {
-      // Cache tout
-      document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
-      // Affiche la vue demandée
-      document.getElementById(viewId).style.display = 'block';
-  }
-
-  // 3. LOGIQUE DASHBOARD
+  // 3. FONCTIONS DU DASHBOARD
   function setupDashboard(user) {
-      const displayEmail = user.isAnonymous ? "Invité Anonyme" : user.email;
+      const displayEmail = user.isAnonymous ? "Invité" : user.email;
       document.getElementById('user-display').innerText = displayEmail;
-      document.getElementById('welcome-msg').innerText = "Bonjour, " + (user.isAnonymous ? "Invité" : user.email.split('@')[0]);
+      document.getElementById('welcome-msg').innerText = user.isAnonymous ? "Mode Invité" : user.email.split('@')[0];
 
-      // Écoute des emails
       const listDiv = document.getElementById('inbox-list');
       
       inboxUnsubscribe = db.collection('emails')
@@ -234,14 +204,46 @@
         .orderBy('timestamp', 'desc')
         .onSnapshot((snapshot) => {
             if (snapshot.empty) {
-                listDiv.innerHTML = '<div class="p-5 text-center text-muted"><i class="fas fa-inbox fa-2x mb-2"></i><br>Aucun message.</div>';
+                listDiv.innerHTML = '<div class="p-5 text-center text-muted">Aucun message.</div>';
                 return;
             }
 
             let html = '';
             snapshot.forEach(doc => {
                 const mail = doc.data();
-                // Format Date
-                let dateStr = "";
-                if(mail.timestamp) {
-                    const d
+                const date = mail.timestamp ? new Date(mail.timestamp.seconds * 1000).toLocaleTimeString() : '';
+                html += `
+                <div class="list-group-item p-3 border-bottom">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1 text-red fw-bold">${mail.subject || 'Sans objet'}</h6>
+                        <small>${date}</small>
+                    </div>
+                    <small class="text-gold">De: ${mail.from}</small>
+                    <p class="mb-1 text-muted small">${mail.body}</p>
+                </div>`;
+            });
+            listDiv.innerHTML = html;
+        });
+  }
+
+  // 4. ACTIONS (Inscription / Connexion / Logout)
+  function handleRegister() {
+      const email = document.getElementById('reg-email').value;
+      const pass = document.getElementById('reg-pass').value;
+      
+      if(pass.length < 6) return showError("Le mot de passe doit faire 6 caractères minimum.");
+
+      auth.createUserWithEmailAndPassword(email, pass)
+        .catch(error => showError(error.message));
+  }
+
+  function handleLogin() {
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-pass').value;
+      
+      auth.signInWithEmailAndPassword(email, pass)
+        .catch(error => showError(error.message));
+  }
+
+  function loginAnonymous() {
+
