@@ -3,288 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SANCTUM - Confidentialité & Expédition</title>
+    <title>SANCTUM - Plateforme</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --sanctum-black: #1a1a1a;
-            --sanctum-gold: #C5A059;
-            --sanctum-paper: #F9F9F7; /* Blanc cassé élégant */
-            --sanctum-white: #ffffff;
-            --sanctum-grey: #f0f0f0;
+            --primary-dark: #2C3E50; /* Bleu nuit professionnel */
+            --accent-gold: #D4AF37;   /* Or plus sombre */
+            --bg-body: #E9ECEF;       /* Gris bureau (moins épuré/blanc) */
+            --card-bg: #FFFFFF;
         }
 
         body {
-            background-color: var(--sanctum-paper);
-            font-family: 'Montserrat', sans-serif;
-            color: var(--sanctum-black);
+            background-color: var(--bg-body);
+            font-family: 'Roboto', sans-serif;
+            color: #333;
         }
 
-        h1, h2, h3, h4, h5, .navbar-brand {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        /* --- NAVIGATION --- */
+        /* --- NAVIGATION PLUS DENSE --- */
         .navbar {
-            background-color: var(--sanctum-white);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding: 1rem 2rem;
+            background-color: var(--primary-dark);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 0.8rem 1rem;
         }
         .navbar-brand {
-            font-size: 1.8rem;
-            color: var(--sanctum-black) !important;
-        }
-
-        /* --- BOUTONS --- */
-        .btn-gold {
-            background-color: var(--sanctum-black);
-            color: var(--sanctum-gold);
-            border: 1px solid var(--sanctum-black);
-            border-radius: 2px; /* Angles plus droits = plus classique */
+            font-weight: 700;
+            color: white !important;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 0.85rem;
-            padding: 10px 20px;
-            transition: all 0.4s ease;
         }
-        .btn-gold:hover {
-            background-color: var(--sanctum-gold);
-            color: var(--sanctum-black);
-            border-color: var(--sanctum-gold);
+        .navbar .btn-outline-light {
+            border-color: rgba(255,255,255,0.3);
+            color: #ddd;
+        }
+        .navbar .btn-outline-light:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        #user-email-display {
+            color: #ccc;
+            font-size: 0.9rem;
         }
 
-        /* --- CARTES --- */
-        .card-classic {
-            background: var(--sanctum-white);
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 4px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03); /* Ombre très douce */
-            padding: 2rem;
-        }
-        .card-header-classic {
-            border-bottom: 1px solid var(--sanctum-gold);
-            padding-bottom: 10px;
+        /* --- CARTES PLUS "SOLIDES" --- */
+        .card-solid {
+            background: var(--card-bg);
+            border: 1px solid #ced4da; /* Bordure visible */
+            border-top: 4px solid var(--primary-dark); /* En-tête coloré */
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Ombre portée */
             margin-bottom: 20px;
-            color: var(--sanctum-black);
-            text-align: center;
         }
+        .card-header-solid {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 15px;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        .card-body { padding: 20px; }
 
-        /* --- INPUTS --- */
-        .form-control, .form-select {
-            border-radius: 2px;
-            border: 1px solid #ddd;
-            background-color: #fafafa;
-            padding: 12px;
+        /* --- ONGLETS STYLE "DOSSIER" --- */
+        .nav-pills {
+            background: #dce1e6;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #cdd4da;
+            margin-bottom: 30px;
         }
-        .form-control:focus {
-            box-shadow: none;
-            border-color: var(--sanctum-gold);
-        }
-
-        /* --- ONGLETS (TABS) --- */
         .nav-pills .nav-link {
-            color: #888;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            background: transparent;
-            border-radius: 0;
-            margin: 0 15px;
-            padding-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+            border-radius: 5px;
+            margin: 0 5px;
+            transition: all 0.2s;
         }
         .nav-pills .nav-link.active {
-            background-color: transparent;
-            color: var(--sanctum-black);
-            border-bottom: 2px solid var(--sanctum-gold);
+            background-color: var(--primary-dark);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        /* Onglet Admin caché par défaut (Sécurité CSS) */
+        #nav-item-admin { display: none !important; }
+
+        /* --- BOUTONS --- */
+        .btn-primary-custom {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: white;
+            font-weight: 600;
+        }
+        .btn-primary-custom:hover {
+            background-color: #1a252f;
+        }
+        .btn-gold {
+            background-color: var(--accent-gold);
+            color: white;
+            border: none;
             font-weight: bold;
         }
+        .btn-gold:hover { background-color: #b39020; color: white; }
 
         /* --- UTILITAIRES --- */
-        .text-gold { color: var(--sanctum-gold) !important; }
         #view-dashboard, .tab-section, #secure-payment-modal { display: none; }
-        #nav-item-admin { display: none; }
-
+        
         /* --- MODAL PAIEMENT --- */
         #secure-payment-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9); /* Fond blanc flou pour effet luxe */
-            z-index: 9999; backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.7); z-index: 9999;
         }
         .payment-window {
-            background: #fff; width: 450px; margin: 80px auto; padding: 40px;
-            border: 1px solid #eee; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            text-align: center; position: relative;
+            background: #fff; width: 500px; margin: 50px auto;
+            border-radius: 8px; overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
+        .payment-header { background: #eee; padding: 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;}
+        .payment-body { padding: 30px; }
 
-        /* Animation douce */
-        .tab-section.active { display: block; animation: fadeIn 0.6s; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        /* Animation */
+        .tab-section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
     </style>
 </head>
 <body>
 
 <div id="view-login" class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
     <div class="col-md-5">
-        <div class="card-classic text-center">
-            <div class="mb-4">
-                <i class="fas fa-shield-alt fa-2x text-gold mb-3"></i>
-                <h1 class="display-5">SANCTUM</h1>
-                <p class="text-muted small text-uppercase" style="letter-spacing: 2px;">Service Privé & Confidentiel</p>
+        <div class="card-solid" style="border-top-color: var(--accent-gold);">
+            <div class="text-center p-4 pb-0">
+                <i class="fas fa-cube fa-3x text-secondary mb-3"></i>
+                <h2 class="fw-bold" style="color: var(--primary-dark);">SANCTUM</h2>
             </div>
-            
-            <div class="mb-3 text-start">
-                <label class="small text-muted mb-1">Identifiant</label>
-                <input type="email" id="login-email" class="form-control" placeholder="votre@email.com">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Email</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="nom@exemple.com">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold small">Mot de passe</label>
+                    <input type="password" id="login-pass" class="form-control" placeholder="••••••••">
+                </div>
+                <button onclick="handleLogin()" class="btn btn-primary-custom w-100 py-2">Se connecter</button>
+                <div class="text-center mt-3">
+                    <a href="#" onclick="handleRegister()" class="text-decoration-none small">Créer un compte</a>
+                </div>
             </div>
-            <div class="mb-4 text-start">
-                <label class="small text-muted mb-1">Mot de passe</label>
-                <input type="password" id="login-pass" class="form-control" placeholder="••••••••">
-            </div>
-
-            <button onclick="handleLogin()" class="btn btn-gold w-100 mb-3">Accéder au Sanctuaire</button>
-            <p class="small text-muted" style="cursor:pointer" onclick="handleRegister()">Première visite ? S'inscrire</p>
         </div>
     </div>
 </div>
 
 <div id="view-dashboard">
-    <nav class="navbar shadow-sm sticky-top">
+    <nav class="navbar navbar-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="#"><i class="fas fa-shield-alt text-gold me-2"></i> SANCTUM</a>
-            <div class="d-flex align-items-center">
-                <span class="small text-muted me-3 d-none d-md-block" id="user-email-display">...</span>
-                <button onclick="auth.signOut()" class="btn btn-outline-dark btn-sm rounded-0">Déconnexion</button>
+            <a class="navbar-brand" href="#"><i class="fas fa-layer-group me-2"></i> SANCTUM</a>
+            <div class="d-flex align-items-center gap-3">
+                <span id="user-email-display">...</span>
+                <button onclick="auth.signOut()" class="btn btn-outline-light btn-sm">Déconnexion</button>
             </div>
         </div>
     </nav>
 
-    <div class="container py-5">
-        <ul class="nav nav-pills justify-content-center mb-5">
+    <div class="container py-4">
+        <ul class="nav nav-pills justify-content-center shadow-sm">
             <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-expedier', this)">Expédition</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-etiquettes', this)">Bordereaux</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-factures', this)">Facturation</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-etiquettes', this)">Mes Bordereaux</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-factures', this)">Comptabilité</a></li>
             
             <li class="nav-item" id="nav-item-admin">
-                <a class="nav-link text-danger" href="#" onclick="switchTab('tab-admin', this)">Administration</a>
+                <a class="nav-link bg-danger text-white ms-2" href="#" onclick="switchTab('tab-admin', this)">
+                    <i class="fas fa-lock me-1"></i> ADMIN
+                </a>
             </li>
         </ul>
 
         <div id="tab-expedier" class="tab-section active">
             <div class="row justify-content-center">
-                <div class="col-md-7">
-                    <div class="card-classic">
-                        <div class="card-header-classic">
-                            <h4>Nouvelle Requête</h4>
+                <div class="col-lg-8">
+                    <div class="card-solid">
+                        <div class="card-header-solid">
+                            <i class="fas fa-plus-circle me-2"></i>Nouvel Envoi
                         </div>
-                        
-                        <div class="mb-4">
-                            <label class="small text-muted text-uppercase fw-bold">Destinataire (Email Sanctum)</label>
-                            <input type="email" id="send-dest-email" class="form-control" placeholder="destinataire@sanctum.io">
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-6">
-                                <label class="small text-muted text-uppercase fw-bold">Format</label>
-                                <select class="form-select" id="send-type" onchange="updateBreakdown()">
-                                    <option value="lettre">✉️ Enveloppe (-100g)</option>
-                                    <option value="colis_s">📦 Standard (-1kg)</option>
-                                    <option value="colis_l">📦 Volumineux (+5kg)</option>
-                                </select>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold text-muted small">DESTINATAIRE (EMAIL SANCTUM)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-at"></i></span>
+                                        <input type="email" id="send-dest-email" class="form-control" placeholder="client@sanctum.io">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <label class="small text-muted text-uppercase fw-bold">Total TTC</label>
-                                <div class="form-control bg-light text-end fw-bold" id="price-total">6.50 €</div>
+
+                            <div class="row mb-4 bg-light p-3 rounded border mx-0">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-muted small">TYPE DE COLIS</label>
+                                    <select class="form-select" id="send-type" onchange="updateBreakdown()">
+                                        <option value="lettre">✉️ Lettre (-100g)</option>
+                                        <option value="colis_s">📦 Standard (-1kg)</option>
+                                        <option value="colis_l">📦 Volumineux (+5kg)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <label class="form-label fw-bold text-muted small">TOTAL À RÉGLER</label>
+                                    <h3 class="text-success fw-bold m-0" id="price-total">6.50 €</h3>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="d-flex justify-content-between small text-muted mb-4 px-2">
-                            <span>Affranchissement Postal : <span id="price-carrier">4.50 €</span></span>
-                            <span>Frais de Service : <span id="price-fee">2.00 €</span></span>
-                        </div>
+                            <div class="mb-4 small text-muted">
+                                <div class="d-flex justify-content-between border-bottom py-1">
+                                    <span>Coût Transporteur</span>
+                                    <span id="price-carrier">4.50 €</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1">
+                                    <span>Frais de Gestion & Anonymisation</span>
+                                    <span id="price-fee">2.00 €</span>
+                                </div>
+                            </div>
 
-                        <button onclick="openSecurePayment()" class="btn btn-gold w-100">
-                            <i class="fas fa-lock me-2"></i> Procéder au Paiement Sécurisé
-                        </button>
+                            <button onclick="openSecurePayment()" class="btn btn-primary-custom w-100 py-3 shadow-sm">
+                                <i class="fas fa-credit-card me-2"></i> Accéder au Paiement
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="tab-etiquettes" class="tab-section">
-            <div class="text-center mb-4">
-                <h4 class="text-muted">Vos Documents d'Expédition</h4>
-                <p class="small">Téléchargez vos bordereaux, imprimez-les et collez-les sur vos colis.</p>
+            <div class="card-solid">
+                <div class="card-header-solid"><i class="fas fa-tags me-2"></i>Historique des Bordereaux</div>
+                <div class="card-body">
+                    <div id="list-labels" class="row g-3">Chargement...</div>
+                </div>
             </div>
-            <div id="list-labels" class="row g-4">Chargement...</div>
         </div>
 
         <div id="tab-factures" class="tab-section">
-            <div class="text-center mb-4">
-                <h4 class="text-muted">Historique & Factures</h4>
+            <div class="card-solid">
+                <div class="card-header-solid"><i class="fas fa-file-invoice-dollar me-2"></i>Vos Factures</div>
+                <div class="card-body">
+                    <div id="list-invoices" class="row g-3">Chargement...</div>
+                </div>
             </div>
-            <div id="list-invoices" class="row g-4">Chargement...</div>
         </div>
 
         <div id="tab-admin" class="tab-section">
-            <div class="card-classic">
-                <h4 class="mb-4 text-danger border-bottom pb-2">Vue Administrateur</h4>
-                
-                <div class="row mb-4 text-center">
-                    <div class="col-md-4">
-                        <div class="p-3 border bg-light">
-                            <small class="text-uppercase text-muted">Chiffre d'Affaires</small>
-                            <h3 id="kpi-ca">0 €</h3>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-3 border bg-light">
-                            <small class="text-uppercase text-muted">Coûts Postaux</small>
-                            <h3 id="kpi-cout" class="text-danger">0 €</h3>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-3 border bg-light">
-                            <small class="text-uppercase text-muted">Marge Brute</small>
-                            <h3 id="kpi-marge" class="text-success">0 €</h3>
+            <div class="alert alert-danger shadow-sm border-danger">
+                <i class="fas fa-user-shield me-2"></i> <strong>Espace Administrateur</strong> - Données Confidentielles
+            </div>
+            
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card-solid text-center h-100 border-primary">
+                        <div class="card-body">
+                            <small class="text-muted text-uppercase fw-bold">Chiffre d'Affaires</small>
+                            <h2 class="text-primary" id="kpi-ca">0 €</h2>
                         </div>
                     </div>
                 </div>
-                
-                <button onclick="exportToCSV()" class="btn btn-dark w-100">Exporter le Grand Livre (CSV)</button>
+                <div class="col-md-4">
+                    <div class="card-solid text-center h-100 border-danger">
+                        <div class="card-body">
+                            <small class="text-muted text-uppercase fw-bold">Coûts Postaux</small>
+                            <h2 class="text-danger" id="kpi-cout">0 €</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-solid text-center h-100 border-success">
+                        <div class="card-body">
+                            <small class="text-muted text-uppercase fw-bold">Marge Nette</small>
+                            <h2 class="text-success" id="kpi-marge">0 €</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-solid">
+                <div class="card-header-solid d-flex justify-content-between align-items-center">
+                    <span>Grand Livre Comptable</span>
+                    <button onclick="exportToCSV()" class="btn btn-sm btn-dark"><i class="fas fa-download me-2"></i>Export CSV</button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0" style="font-size: 0.9rem;">
+                            <thead class="table-dark"><tr><th>Date</th><th>Ref</th><th>Total</th><th>Coût</th><th>Marge</th></tr></thead>
+                            <tbody id="table-compta-body"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <div id="secure-payment-modal">
     <div class="payment-window">
-        <div class="text-end mb-2"><button class="btn-close" onclick="closePayment()"></button></div>
-        
-        <h3 class="mb-1 font-serif">Paiement</h3>
-        <p class="text-gold small text-uppercase mb-4">Gateway Sécurisée SSL</p>
-        
-        <div class="my-4 py-3 border-top border-bottom">
-            <div class="d-flex justify-content-between">
-                <span>Total à régler</span>
-                <strong id="pay-amount" class="fs-5">0.00 €</strong>
+        <div class="payment-header">
+            <h5 class="m-0"><i class="fas fa-lock me-2"></i>Paiement Sécurisé</h5>
+            <button type="button" class="btn-close" onclick="closePayment()"></button>
+        </div>
+        <div class="payment-body text-center">
+            <p class="text-muted mb-4">Vous allez être débité de :</p>
+            <h1 class="display-4 fw-bold mb-4" id="pay-amount">0.00 €</h1>
+            
+            <div class="alert alert-light border text-start mb-4">
+                <div class="d-flex align-items-center">
+                    <i class="far fa-credit-card fa-2x me-3 text-secondary"></i>
+                    <div>
+                        <strong>Carte Bancaire</strong><br>
+                        <small class="text-muted">**** **** **** 4242</small>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="text-start mb-3">
-            <div class="p-2 border rounded mb-2 bg-light text-muted"><i class="far fa-credit-card me-2"></i> **** **** **** 4242</div>
+            <button onclick="confirmPayment()" class="btn btn-success w-100 py-3 fw-bold shadow-sm">Valider la Transaction</button>
         </div>
-
-        <button onclick="confirmPayment()" class="btn btn-gold w-100 py-3">Confirmer la Transaction</button>
-        <div class="mt-3 small text-muted"><i class="fas fa-lock"></i> Vos données bancaires sont chiffrées.</div>
     </div>
 </div>
 
@@ -295,8 +334,10 @@
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 <script>
-// --- CONFIGURATION ---
+// --- 1. CONFIGURATION ADMIN (TRES IMPORTANT) ---
+// Mettez VOTRE email exact ici. C'est la seule clé pour voir l'onglet Admin.
 const ADMIN_EMAIL = "annelaure.alibert@gmail.com"; 
+
 const firebaseConfig = {
     apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
     authDomain: "mypseudomail-9d093.firebaseapp.com",
@@ -313,6 +354,7 @@ const db = firebase.firestore();
 const PRICES = { 'lettre': {c:4.5, f:2}, 'colis_s': {c:8.9, f:4}, 'colis_l': {c:15.9, f:6} };
 let accountingData = [];
 
+// --- AUTHENTIFICATION & SECURITE ---
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById('view-login').style.display='none';
@@ -322,9 +364,16 @@ auth.onAuthStateChanged(u => {
         loadLabels(u); 
         loadInvoices(u);
 
-        if(u.email && u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
-            document.getElementById('nav-item-admin').style.display = 'block';
+        // VERIFICATION STRICTE DE L'ADMIN
+        const isAdmin = u.email && (u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+        
+        if(isAdmin) {
+            // Si c'est vous : on force l'affichage (le CSS le cache avec !important)
+            document.getElementById('nav-item-admin').style.setProperty('display', 'block', 'important');
             loadAccounting();
+        } else {
+            // Si ce n'est pas vous : on s'assure qu'il est caché
+            document.getElementById('nav-item-admin').style.setProperty('display', 'none', 'important');
         }
     }
 });
@@ -336,7 +385,6 @@ function switchTab(id, btn) {
     btn.classList.add('active');
 }
 
-// --- LOGIQUE PRIX ---
 function updateBreakdown() {
     const t = document.getElementById('send-type').value;
     const p = PRICES[t];
@@ -345,23 +393,21 @@ function updateBreakdown() {
     document.getElementById('price-total').innerText = (p.c+p.f).toFixed(2)+" €";
 }
 function openSecurePayment() {
-    if(!document.getElementById('send-dest-email').value) return alert("Veuillez indiquer un destinataire.");
+    if(!document.getElementById('send-dest-email').value) return alert("Email destinataire requis");
     const t = document.getElementById('send-type').value;
     document.getElementById('pay-amount').innerText = (PRICES[t].c+PRICES[t].f).toFixed(2)+" €";
     document.getElementById('secure-payment-modal').style.display='block';
 }
 function closePayment() { document.getElementById('secure-payment-modal').style.display='none'; }
 
-// --- TRANSACTION ---
 function confirmPayment() {
     const u = auth.currentUser;
     const dest = document.getElementById('send-dest-email').value;
     const type = document.getElementById('send-type').value;
     const p = PRICES[type];
-    const trackCode = "SANCTUM-"+Math.floor(100000 + Math.random() * 900000);
+    const trackCode = "SC"+Math.floor(10000000 + Math.random() * 90000000);
     const invId = "INV-"+Math.floor(Math.random()*10000);
 
-    // Enregistrement
     db.collection('shipments').add({
         sender_uid: u.uid, sender_email: u.email, recipient_email: dest,
         type: type, tracking_code: trackCode, status: 'paid',
@@ -371,18 +417,18 @@ function confirmPayment() {
     db.collection('invoices').add({
         user_uid: u.uid, invoice_id: invId, date: new Date().toISOString(), 
         total: p.c+p.f, cost_carrier: p.c, margin_service: p.f,
-        items: [{d:`Envoi ${type}`, a:p.c}, {d:"Service Sanctum", a:p.f}],
+        items: [{d:`Expédition ${type}`, a:p.c}, {d:"Service Sanctum", a:p.f}],
         created_at: firebase.firestore.FieldValue.serverTimestamp()
     }).then(() => {
         closePayment();
-        // Téléchargement Auto
         generateRealLabel(trackCode, u.email, dest);
         switchTab('tab-etiquettes', document.querySelectorAll('.nav-link')[1]);
+        // Refresh Admin seulement si admin connecté
         if(u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) loadAccounting();
     });
 }
 
-// --- AFFICHAGE DONNEES ---
+// --- DATA ---
 function loadLabels(u) {
     db.collection('shipments').where('sender_uid','==',u.uid).orderBy('created_at','desc').onSnapshot(snap => {
         const d = document.getElementById('list-labels'); d.innerHTML='';
@@ -390,20 +436,14 @@ function loadLabels(u) {
             const data = doc.data();
             d.innerHTML += `
             <div class="col-md-6">
-                <div class="card-classic p-3 d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong class="font-monospace">${data.tracking_code}</strong><br>
-                        <small class="text-muted">Vers: ${data.recipient_email}</small>
-                    </div>
-                    <button class="btn btn-outline-dark btn-sm rounded-0" onclick='generateRealLabel("${data.tracking_code}", "${u.email}", "${data.recipient_email}")'>
-                        <i class="fas fa-download"></i> PDF
-                    </button>
+                <div class="card-solid p-3 d-flex justify-content-between align-items-center">
+                    <div><strong class="text-primary">${data.tracking_code}</strong><br><small class="text-muted">Vers: ${data.recipient_email}</small></div>
+                    <button class="btn btn-outline-secondary btn-sm" onclick='generateRealLabel("${data.tracking_code}", "${u.email}", "${data.recipient_email}")'><i class="fas fa-print"></i> PDF</button>
                 </div>
             </div>`;
         });
     });
 }
-
 function loadInvoices(u) {
     db.collection('invoices').where('user_uid','==',u.uid).orderBy('created_at','desc').onSnapshot(snap => {
         const d = document.getElementById('list-invoices'); d.innerHTML='';
@@ -411,9 +451,9 @@ function loadInvoices(u) {
             const data = doc.data();
             d.innerHTML += `
             <div class="col-md-6">
-                <div class="card-classic p-3 d-flex justify-content-between align-items-center">
-                    <div><strong>#${data.invoice_id}</strong><br>${data.total.toFixed(2)} €</div>
-                    <button class="btn btn-outline-dark btn-sm rounded-0" onclick='generateInvoicePDF(${JSON.stringify(data)})'>Facture</button>
+                <div class="card-solid p-3 d-flex justify-content-between align-items-center">
+                    <div><strong>${data.invoice_id}</strong><br>${data.total.toFixed(2)} €</div>
+                    <button class="btn btn-outline-secondary btn-sm" onclick='generateInvoicePDF(${JSON.stringify(data)})'>Facture</button>
                 </div>
             </div>`;
         });
@@ -422,13 +462,19 @@ function loadInvoices(u) {
 
 // --- ADMIN ---
 function loadAccounting() {
+    // Vérification supplémentaire JS
     if(!auth.currentUser || auth.currentUser.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) return;
+
     db.collection('invoices').orderBy('created_at', 'desc').onSnapshot(snap => {
+        const tbody = document.getElementById('table-compta-body'); tbody.innerHTML = '';
         accountingData = []; let ca=0, cout=0, marge=0;
         snap.forEach(doc => {
             const d = doc.data();
-            ca += d.total; cout += (d.cost_carrier||0); marge += (d.margin_service||0);
-            accountingData.push({d:d.date, i:d.invoice_id, t:d.total, c:d.cost_carrier, m:d.margin_service});
+            const c = d.cost_carrier || 0;
+            const m = d.margin_service || 0;
+            ca += d.total; cout += c; marge += m;
+            tbody.innerHTML += `<tr><td>${new Date(d.date).toLocaleDateString()}</td><td>${d.invoice_id}</td><td>${d.total.toFixed(2)}</td><td class="text-danger">${c.toFixed(2)}</td><td class="text-success fw-bold">${m.toFixed(2)}</td></tr>`;
+            accountingData.push({d:d.date, i:d.invoice_id, t:d.total, c:c, m:m});
         });
         document.getElementById('kpi-ca').innerText = ca.toFixed(2)+" €";
         document.getElementById('kpi-cout').innerText = cout.toFixed(2)+" €";
@@ -441,68 +487,43 @@ function exportToCSV() {
     const link = document.createElement("a"); link.href = encodeURI("data:text/csv;charset=utf-8,"+csv); link.download = "Sanctum_Compta.csv"; link.click();
 }
 
-// --- GENERATION PDF PREMIUM ---
+// --- PDF GENERATORS ---
 async function generateRealLabel(code, sender, destEmail) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ format: [100, 150], unit: 'mm' });
 
-    // Design Étiquette
-    doc.setFillColor(20, 20, 20); doc.rect(0,0,100,20,'F'); // Noir profond
+    doc.setFillColor(44, 62, 80); doc.rect(0,0,100,20,'F');
     doc.setTextColor(255,255,255); doc.setFontSize(18); doc.setFont("helvetica","bold");
-    doc.text("SANCTUM RELAIS", 50, 13, null,null,"center");
+    doc.text("SANCTUM", 50, 13, null,null,"center");
 
     doc.setTextColor(0,0,0); doc.setFontSize(9); doc.setFont("helvetica","normal");
-    doc.text(`EXP: ${sender}`, 5, 28);
-    doc.line(5, 32, 95, 32);
+    doc.text(`EXP: ${sender}`, 5, 28); doc.line(5, 32, 95, 32);
 
-    doc.setFontSize(12); doc.setFont("helvetica","bold"); doc.text("HUB LOGISTIQUE", 5, 42);
+    doc.setFontSize(12); doc.setFont("helvetica","bold"); doc.text("HUB CENTRAL", 5, 42);
     doc.setFontSize(10); doc.setFont("helvetica","normal"); 
-    doc.text("14 Avenue de la Confidentialité", 5, 48);
-    doc.text("75000 PARIS - FRANCE", 5, 54);
+    doc.text("14 Avenue de la Confidentialité", 5, 48); doc.text("75000 PARIS", 5, 54);
 
-    doc.setDrawColor(0); doc.rect(5, 62, 90, 15);
-    doc.setFontSize(9); doc.text("REF CLIENT FINAL:", 7, 67);
+    doc.setDrawColor(0); doc.setLineWidth(0.5); doc.rect(5, 62, 90, 15);
+    doc.setFontSize(9); doc.text("REF FINAL:", 7, 67);
     doc.setFont("courier", "bold"); doc.setFontSize(11); doc.text(destEmail, 7, 73);
 
     const canvas = document.createElement("canvas");
-    JsBarcode(canvas, code, {format: "CODE128", displayValue: true, fontSize: 18, height: 40, lineColor: "#000"});
+    JsBarcode(canvas, code, {format: "CODE128", displayValue: true, fontSize: 18, height: 40});
     doc.addImage(canvas.toDataURL("image/png"), 'PNG', 5, 85, 90, 30);
 
     doc.save(`Bordereau_${code}.pdf`);
 }
-
 async function generateInvoicePDF(data) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-
-    // Header Classique
-    doc.setFont("times", "bold"); doc.setFontSize(24); doc.setTextColor(20,20,20);
-    doc.text("SANCTUM", 105, 20, null, null, "center");
-    
-    doc.setFont("helvetica", "normal"); doc.setFontSize(10);
-    doc.text("FACTURE", 105, 28, null, null, "center");
-
-    doc.line(20, 35, 190, 35); // Ligne élégante
-
-    doc.text("Sanctum Services SAS", 20, 50);
-    doc.text("Paris, France", 20, 55);
-
-    doc.text(`Date: ${new Date(data.date).toLocaleDateString()}`, 150, 50);
-    doc.text(`Réf: ${data.invoice_id}`, 150, 55);
-
-    let y = 80;
-    doc.setFont("helvetica", "bold"); doc.text("Description", 20, y); doc.text("Montant", 170, y);
-    y+=10; doc.line(20, y-5, 190, y-5); 
-    doc.setFont("helvetica", "normal");
-
-    data.items.forEach(item => {
-        doc.text(item.d, 20, y); doc.text(item.a.toFixed(2)+" €", 170, y); y+=10;
-    });
-
-    y+=10; doc.line(20, y, 190, y); y+=10;
-    doc.setFont("helvetica", "bold"); doc.setFontSize(12);
-    doc.text("TOTAL TTC", 130, y); doc.text(data.total.toFixed(2)+" €", 170, y);
-
+    doc.setFont("helvetica", "bold"); doc.setFontSize(20); doc.text("SANCTUM", 105, 20, null, null, "center");
+    doc.setFontSize(10); doc.setFont("helvetica", "normal");
+    doc.text(`Facture ${data.invoice_id}`, 105, 28, null, null, "center");
+    doc.line(20, 35, 190, 35);
+    let y = 60;
+    data.items.forEach(item => { doc.text(item.d, 20, y); doc.text(item.a.toFixed(2)+" €", 170, y); y+=10; });
+    doc.line(20, y, 190, y);
+    doc.setFont("helvetica", "bold"); doc.text("TOTAL", 130, y+10); doc.text(data.total.toFixed(2)+" €", 170, y+10);
     doc.save(`Facture_${data.invoice_id}.pdf`);
 }
 
