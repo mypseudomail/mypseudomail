@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SANCTUM - Espace Membre</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --gold: #C5A059; --dark: #1a1a1a; --bg: #f4f4f4; }
+        body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; padding-bottom: 50px; }
+        
+        /* Navbar */
+        .navbar { background: var(--dark); padding: 1rem; }
+        .navbar-brand { color: white !important; font-weight: bold; letter-spacing: 2px; }
+        
+        /* Onglets */
+        .nav-pills .nav-link { color: #666; margin: 0 5px; border-radius: 0; }
+        .nav-pills .nav-link.active { background-color: var(--gold); color: white; }
+        #admin-tab-link { display: none !important; } /* Caché par défaut */
+
+        /* Cartes */
+        .card-custom { background: white; border: 1px solid #ddd; border-top: 4px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card-header { background: white; border-bottom: 1px solid #eee; font-weight: bold; color: var(--dark); }
+
+        /* Boutons */
+        .btn-gold { background: var(--gold); color: white; border: none; padding: 10px 20px; font-weight: bold; width: 100%; transition: 0.3s; }
+        .btn-gold:hover { background: #b08d4b; color: white; }
+
+        /* Zones */
+        .tab-section { display: none; animation: fade 0.5s; }
+        .tab-section.active { display: block; }
+        @keyframes fade { from{opacity:0} to{opacity:1} }
+
+        /* Modal */
+        #payment-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; backdrop-filter:blur(5px); }
+        .modal-content { background:white; width:400px; margin:100px auto; padding:30px; text-align:center; border-radius:4px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">SANCTUM</a>
+        <div class="d-flex align-items-center">
+            <small class="text-white me-3" id="user-display">Chargement...</small>
+            <button onclick="logout()" class="btn btn-sm btn-outline-light">Déconnexion</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <ul class="nav nav-pills justify-content-center mb-4">
+        <li class="nav-item"><a class="nav-link active" href="#" onclick="show('tab-send', this)">Nouvel Envoi</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="show('tab-labels', this)">Mes Bordereaux</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="show('tab-invoices', this)">Mes Factures</a></li>
+        <li class="nav-item" id="admin-tab-link"><a class="nav-link bg-danger text-white" href="#" onclick="show('tab-admin', this)">ADMIN</a></li>
+    </ul>
+
+    <div id="tab-send" class="tab-section active">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card-custom p-4">
+                    <h5 class="mb-4">Commande d'expédition</h5>
+                    
+                    <label class="fw-bold small">DESTINATAIRE (EMAIL)</label>
+                    <input type="email" id="dest-email" class="form-control mb-3" placeholder="client@email.com">
+                    
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <label class="fw-bold small">FORMAT</label>
+                            <select id="format" class="form-control" onchange="calcPrice()">
+                                <option value="lettre">Lettre (-100g)</option>
+                                <option value="colis">Colis Standard</option>
+                            </select>
+                        </div>
+                        <div class="col-6 text-end">
+                            <label class="fw-bold small">TOTAL TTC</label>
+                            <div class="h4 text-success" id="price-display">6.50 €</div>
+                        </div>
+                    </div>
+
+                    <button onclick="openPayment()" class="btn-gold">PAYER LA COMMANDE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-labels" class="tab-section">
+        <div class="alert alert-secondary">Retrouvez ici vos étiquettes à imprimer.</div>
+        <div id="labels-list" class="row g-3">Chargement...</div>
+    </div>
+
+    <div id="tab-invoices" class="tab-section">
+        <div class="alert alert-secondary">Historique de vos paiements et factures.</div>
+        <div id="invoices-list" class="row g-3">Chargement...</div>
+    </div>
+
+    <div id="tab-admin" class="tab-section">
+        <div class="card-custom p-4">
+            <h4>Espace Comptable</h4>
+            <div class="row text-center my-4">
+                <div class="col-4"><h6>CA Total</h6><h3 id="adm-ca">0€</h3></div>
+                <div class="col-4"><h6>Coût Poste</h6><h3 id="adm-cost" class="text-danger">0€</h3></div>
+                <div class="col-4"><h6>Marge</h6><h3 id="adm-margin" class="text-success">0€</h3></div>
+            </div>
+            <button onclick="exportCSV()" class="btn btn-dark w-100">Télécharger CSV Compta</button>
+        </div>
+    </div>
+</div>
+
+<div id="payment-modal">
+    <div class="modal-content">
+        <h4>Paiement Sécurisé</h4>
+        <p class="mb-4">Montant: <strong id="modal-price">...</strong></p>
+        <div class="mb-4 p-2 bg-light border text-start"><i class="fas fa-credit-card"></i> **** **** **** 4242</div>
+        <button onclick="pay()" class="btn btn-success w-100">VALIDER</button>
+        <button onclick="document.getElementById('payment-modal').style.display='none'" class="btn btn-link text-muted mt-2">Annuler</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+<script>
+    // --- CONFIGURATION ---
+    const ADMIN_EMAIL = "annelaure.alibert@gmail.com"; 
+    const firebaseConfig = {
+        apiKey: "AIzaSyC95sX3qXF5JphZpLpnBxZgkLyBNSKBiU8",
+        authDomain: "mypseudomail-9d093.firebaseapp.com",
+        projectId: "mypseudomail-9d093",
+        storageBucket: "mypseudomail-9d093.firebasestorage.app",
+        messagingSenderId: "189746859638",
+        appId: "1:189746859638:web:abc519c2a17116a32b9957"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let PRICES = { 'lettre': {c:4.5, f:2}, 'colis': {c:8.9, f:4} };
+    let accounting = [];
+
+    // --- VERIFICATION CONNEXION ---
+    auth.onAuthStateChanged(user => {
+        if(!user) {
+            window.location.href = "index.html"; // Renvoi à la case départ si pas connecté
+        } else {
+            document.getElementById('user-display').innerText = user.email;
+            // Check Admin
+            if(user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                document.getElementById('admin-tab-link').style.setProperty('display', 'block', 'important');
+                loadAdmin();
+            }
+            // Charger les données
+            loadData(user);
+        }
+    });
+
+    function logout() { auth.signOut(); }
+
+    function show(id, btn) {
+        document.querySelectorAll('.tab-section').forEach(e => e.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function calcPrice() {
+        let t = document.getElementById('format').value;
+        document.getElementById('price-display').innerText = (PRICES[t].c + PRICES[t].f).toFixed(2) + " €";
+    }
+
+    function openPayment() {
+        let t = document.getElementById('format').value;
+        document.getElementById('modal-price').innerText = (PRICES[t].c + PRICES[t].f).toFixed(2) + " €";
+        document.getElementById('payment-modal').style.display = 'block';
+    }
+
+    // --- PAIEMENT ---
+    function pay() {
+        const u = auth.currentUser;
+        const dest = document.getElementById('dest-email').value;
+        const type = document.getElementById('format').value;
+        const p = PRICES[type];
+        const code = "SC" + Math.floor(100000 + Math.random() * 900000);
+        const inv = "FAC-" + Math.floor(Math.random() * 10000);
+
+        if(!dest) return alert("Email destinataire manquant");
+
+        // 1. Sauvegarde DB
+        db.collection('shipments').add({
+            uid: u.uid, dest: dest, type: type, code: code, 
+            date: new Date().toISOString()
+        });
+
+        db.collection('invoices').add({
+            uid: u.uid, id: inv, total: p.c+p.f, cost: p.c, margin: p.f, 
+            date: new Date().toISOString()
+        }).then(() => {
+            document.getElementById('payment-modal').style.display = 'none';
+            alert("Paiement Validé !");
+            makeLabelPDF(code, u.email, dest); // Téléchargement Auto
+            // Refresh
+            loadData(u);
+            if(u.email === ADMIN_EMAIL) loadAdmin();
+        });
+    }
+
+    // --- CHARGEMENT DES DONNÉES (CORRIGÉ) ---
+    function loadData(u) {
+        // BORDEREAUX
+        db.collection('shipments').where('uid', '==', u.uid).get().then(snap => {
+            let html = '';
+            snap.forEach(doc => {
+                let d = doc.data();
+                html += `<div class="col-md-6"><div class="card-custom p-3 d-flex justify-content-between align-items-center">
+                    <div><strong>${d.code}</strong><br><small>Vers ${d.dest}</small></div>
+                    <button class="btn btn-warning btn-sm" onclick="makeLabelPDF('${d.code}', '${u.email}', '${d.dest}')">PDF</button>
+                </div></div>`;
+            });
+            document.getElementById('labels-list').innerHTML = html || '<div class="text-center p-3">Aucun bordereau.</div>';
+        });
+
+        // FACTURES
+        db.collection('invoices').where('uid', '==', u.uid).get().then(snap => {
+            let html = '';
+            snap.forEach(doc => {
+                let d = doc.data();
+                html += `<div class="col-md-6"><div class="card-custom p-3 d-flex justify-content-between align-items-center">
+                    <div><strong>${d.id}</strong><br>${d.total.toFixed(2)}€</div>
+                    <button class="btn btn-dark btn-sm" onclick="makeInvoicePDF('${d.id}', ${d.total})">PDF</button>
+                </div></div>`;
+            });
+            document.getElementById('invoices-list').innerHTML = html || '<div class="text-center p-3">Aucune facture.</div>';
+        });
+    }
+
+    // --- ADMIN ---
+    function loadAdmin() {
+        db.collection('invoices').get().then(snap => {
+            let ca=0, co=0, ma=0;
+            accounting = [];
+            snap.forEach(doc => {
+                let d = doc.data();
+                ca+=d.total; co+=d.cost; ma+=d.margin;
+                accounting.push([d.date, d.id, d.total, d.cost, d.margin]);
+            });
+            document.getElementById('adm-ca').innerText = ca.toFixed(2)+"€";
+            document.getElementById('adm-cost').innerText = co.toFixed(2)+"€";
+            document.getElementById('adm-margin').innerText = ma.toFixed(2)+"€";
+        });
+    }
+    function exportCSV() {
+        let csv = "Date;Ref;Total;Cout;Marge\n" + accounting.map(e => e.join(";")).join("\n");
+        let link = document.createElement("a");
+        link.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+        link.download = "Compta.csv";
+        link.click();
+    }
+
+    // --- PDF ---
+    function makeLabelPDF(code, exp, dest) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({format: [100, 150]});
+        doc.setFillColor(0); doc.rect(0,0,100,20,'F');
+        doc.setTextColor(255); doc.setFontSize(20); doc.text("SANCTUM", 50, 13, null, null, "center");
+        doc.setTextColor(0); doc.setFontSize(10); doc.text("EXP: "+exp, 5, 30);
+        doc.setFontSize(14); doc.text("DESTINATAIRE FINAL:", 5, 50);
+        doc.setFont("courier", "bold"); doc.text(dest, 5, 58);
+        
+        let cvs = document.createElement('canvas');
+        JsBarcode(cvs, code, {format:"CODE128", displayValue:true});
+        doc.addImage(cvs.toDataURL("image/png"), 'PNG', 5, 80, 90, 30);
+        doc.save("Bordereau_"+code+".pdf");
+    }
+
+    function makeInvoicePDF(id, total) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFontSize(22); doc.text("FACTURE SANCTUM", 105, 20, null, null, "center");
+        doc.setFontSize(12); doc.text("Ref: "+id, 20, 40);
+        doc.text("Total Payé: "+total.toFixed(2)+" €", 20, 50);
+        doc.text("Etat: Acquittée", 20, 60);
+        doc.save("Facture_"+id+".pdf");
+    }
+</script>
+</body>
+</html>
