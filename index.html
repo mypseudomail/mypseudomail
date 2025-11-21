@@ -3,35 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GhostBox - Relais & PDF</title>
+    <title>GhostBox - Paiement & Facturation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root { --luxe-red: #8B0000; --luxe-gold: #B8860B; --bg-light: #f4f6f9; }
         body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; }
         
-        #view-dashboard, .tab-section { display: none; }
+        #view-dashboard, .tab-section, #secure-payment-modal { display: none; }
         #view-login { display: block; }
 
         .text-red { color: var(--luxe-red) !important; }
+        .text-gold { color: var(--luxe-gold) !important; }
+        
         .btn-gold {
             background: linear-gradient(45deg, var(--luxe-gold), #d4af37);
-            color: white; border: none; font-weight: bold;
+            color: white; border: none; font-weight: bold; box-shadow: 0 4px 10px rgba(184,134,11,0.3);
         }
         .btn-gold:hover { transform: translateY(-2px); color: white; }
 
-        .card-luxury {
-            border: none; border-radius: 12px; background: white;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-        .card-header-luxury {
-            background: var(--luxe-red); color: white; padding: 15px;
-            border-bottom: 4px solid var(--luxe-gold);
-        }
-
+        .card-luxury { border: none; border-radius: 12px; background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+        .card-header-luxury { background: var(--luxe-red); color: white; padding: 15px; border-bottom: 4px solid var(--luxe-gold); }
+        
         .nav-pills .nav-link.active { background-color: var(--luxe-red); border-bottom: 2px solid var(--luxe-gold); }
         .nav-pills .nav-link { color: #555; font-weight: 600; margin: 0 5px; }
         .tab-section.active { display: block; animation: slideIn 0.4s; }
+        
+        /* STYLE FACTURE */
+        .invoice-box { border: 1px solid #eee; padding: 20px; margin-top: 20px; background: #fff; display:none; }
+        .invoice-title { color: var(--luxe-red); font-weight: bold; border-bottom: 2px solid var(--luxe-gold); padding-bottom: 10px; margin-bottom: 20px; }
+        
+        /* MODAL PAIEMENT SECURISE */
+        #secure-payment-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+        .payment-window {
+            background: white; width: 400px; margin: 100px auto; padding: 30px;
+            border-radius: 10px; text-align: center; position: relative;
+        }
         @keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
     </style>
 </head>
@@ -40,27 +51,16 @@
 <div id="view-login" class="container py-5" style="max-width: 900px;">
     <div class="text-center mb-5">
         <h1 class="display-4 text-red fw-bold"><i class="fas fa-box-open text-gold"></i> GhostBox</h1>
-        <p class="lead text-muted">Relais Postal Sécurisé</p>
+        <p class="lead text-muted">Service Premium d'Anonymisation</p>
     </div>
-    <div class="row g-4">
+    <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card card-luxury h-100">
-                <div class="card-header-luxury text-center"><h4>Inscription</h4></div>
-                <div class="card-body p-4">
-                    <input type="email" id="reg-email" class="form-control mb-3" placeholder="Email">
-                    <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Mot de passe">
-                    <button onclick="handleRegister()" class="btn btn-gold w-100">Créer Compte</button>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card card-luxury h-100">
-                <div class="card-body p-5 text-center">
-                    <h4 class="text-red mb-3">Connexion</h4>
-                    <input type="email" id="login-email" class="form-control mb-3" placeholder="Email">
-                    <input type="password" id="login-pass" class="form-control mb-3" placeholder="Mot de passe">
-                    <button onclick="handleLogin()" class="btn btn-outline-danger w-100">Se connecter</button>
-                </div>
+            <div class="card card-luxury p-5 text-center">
+                <h4 class="text-red mb-3">Connexion</h4>
+                <input type="email" id="login-email" class="form-control mb-3" placeholder="admin@test.com">
+                <input type="password" id="login-pass" class="form-control mb-3" placeholder="******">
+                <button onclick="handleLogin()" class="btn btn-gold w-100">Entrer</button>
+                <small class="d-block mt-3 text-muted" onclick="handleRegister()" style="cursor:pointer">Pas de compte ? Créer un compte</small>
             </div>
         </div>
     </div>
@@ -70,80 +70,95 @@
     <nav class="navbar navbar-light bg-white shadow-sm px-4">
         <div class="container">
             <a class="navbar-brand text-red fw-bold" href="#">GhostBox</a>
-            <div>
-                <span class="badge bg-warning text-dark me-2" id="user-email-display">...</span>
-                <button onclick="auth.signOut()" class="btn btn-sm btn-outline-dark">Sortir</button>
-            </div>
+            <div><span class="badge bg-warning text-dark me-2" id="user-email-display">...</span><button onclick="auth.signOut()" class="btn btn-sm btn-outline-dark">Sortir</button></div>
         </div>
     </nav>
 
     <div class="container py-4">
         <ul class="nav nav-pills mb-4 justify-content-center">
-            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-expedier', this)">📦 Expédier</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-etiquettes', this)">🏷️ Mes Étiquettes</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-suivi', this)">📡 Suivi</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-adresse', this)">🏠 Adresse</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('tab-expedier', this)">📦 Nouvel Envoi</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-factures', this)">📄 Mes Factures</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('tab-etiquettes', this)">🏷️ Étiquettes</a></li>
         </ul>
 
         <div id="tab-expedier" class="tab-section active">
             <div class="row justify-content-center">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <div class="card card-luxury p-4">
-                        <h5 class="text-red border-bottom pb-2">Nouvel Envoi</h5>
-                        <label class="fw-bold mt-3">Destinataire (Email)</label>
-                        <input type="email" id="send-dest-email" class="form-control mb-3">
+                        <h5 class="text-red border-bottom pb-2">Affranchissement & Services</h5>
+                        
+                        <label class="fw-bold mt-3">Destinataire (Email GhostBox)</label>
+                        <input type="email" id="send-dest-email" class="form-control mb-3" placeholder="destinataire@email.com">
+                        
                         <div class="row">
-                            <div class="col-6">
-                                <label class="fw-bold">Format</label>
-                                <select class="form-select" id="send-type" onchange="updatePrice()">
-                                    <option value="Lettre">✉️ Lettre</option>
-                                    <option value="Petit Colis">📦 Petit Colis</option>
-                                    <option value="Gros Colis">📦 Gros Colis</option>
+                            <div class="col-12">
+                                <label class="fw-bold">Type d'envoi</label>
+                                <select class="form-select mb-3" id="send-type" onchange="updateBreakdown()">
+                                    <option value="lettre">✉️ Lettre suivie (-100g)</option>
+                                    <option value="colis_s">📦 Colis Standard (-1kg)</option>
+                                    <option value="colis_l">📦 Gros Colis (+5kg)</option>
                                 </select>
                             </div>
-                            <div class="col-6">
-                                <label class="fw-bold">Prix</label>
-                                <div class="h4 text-red" id="price-display">4.50 €</div>
+                        </div>
+
+                        <div class="bg-light p-3 rounded mb-3 border">
+                            <h6 class="fw-bold text-muted">Détail de votre commande :</h6>
+                            <div class="d-flex justify-content-between">
+                                <span>Tarif La Poste/Transporteur</span>
+                                <span id="price-carrier">4.50 €</span>
+                            </div>
+                            <div class="d-flex justify-content-between text-gold">
+                                <span>Frais de Service GhostBox</span>
+                                <span id="price-fee">2.00 €</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong class="text-dark">TOTAL À PAYER</strong>
+                                <h3 class="text-red mb-0" id="price-total">6.50 €</h3>
                             </div>
                         </div>
-                        <button onclick="processShipment()" class="btn btn-gold w-100 mt-4 py-2">Payer & Générer</button>
+
+                        <button onclick="openSecurePayment()" class="btn btn-gold w-100 py-2">
+                            <i class="fas fa-lock"></i> Payer en toute sécurité
+                        </button>
+                        <small class="text-muted text-center d-block mt-2"><i class="fas fa-shield-alt"></i> Paiement chiffré SSL</small>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div id="tab-factures" class="tab-section">
+            <div class="alert alert-info">Vos factures détaillent les frais de service. L'adresse du destinataire n'y apparaît jamais.</div>
+            <div id="list-invoices" class="row g-3">Chargement...</div>
         </div>
 
         <div id="tab-etiquettes" class="tab-section">
-            <div class="alert alert-info">Cliquez sur "PDF" pour télécharger l'étiquette à imprimer.</div>
             <div id="list-labels" class="row g-3">Chargement...</div>
         </div>
+    </div>
+</div>
 
-        <div id="tab-suivi" class="tab-section">
+<div id="secure-payment-modal">
+    <div class="payment-window shadow-lg">
+        <div class="text-end"><button class="btn-close" onclick="closePayment()"></button></div>
+        <i class="fas fa-lock fa-3x text-success mb-3"></i>
+        <h4>Paiement Sécurisé</h4>
+        <p class="text-muted">Simulateur Bancaire (Stripe/Bank)</p>
+        
+        <div class="bg-light p-3 rounded mb-4 text-start">
+            <small>Commande : <span id="pay-ref">GB-REF</span></small><br>
+            <strong>Montant : <span id="pay-amount" class="text-red">...</span></strong>
+        </div>
+
+        <div class="mb-3">
+            <input type="text" class="form-control mb-2" placeholder="0000 0000 0000 0000" disabled value="**** **** **** 4242">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="card p-3 h-100">
-                        <h6>📤 Envoyés</h6>
-                        <div id="list-sent" class="list-group list-group-flush">...</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card p-3 h-100">
-                        <h6>📥 Reçus</h6>
-                        <div id="list-received" class="list-group list-group-flush">...</div>
-                    </div>
-                </div>
+                <div class="col-6"><input type="text" class="form-control" placeholder="MM/AA" disabled value="12/25"></div>
+                <div class="col-6"><input type="text" class="form-control" placeholder="CVC" disabled value="***"></div>
             </div>
         </div>
 
-        <div id="tab-adresse" class="tab-section">
-            <div class="card card-luxury p-4 mx-auto" style="max-width: 600px;">
-                <h5 class="text-red">Mon Adresse de Réception</h5>
-                <input type="text" id="addr-name" class="form-control mb-2" placeholder="Nom">
-                <input type="text" id="addr-street" class="form-control mb-2" placeholder="Rue">
-                <input type="text" id="addr-city" class="form-control mb-2" placeholder="Ville">
-                <button onclick="saveAddress()" class="btn btn-gold w-100">Enregistrer</button>
-                <div id="addr-msg" class="text-success text-center mt-2"></div>
-            </div>
-        </div>
+        <button onclick="confirmPayment()" class="btn btn-success w-100 py-2">Valider le paiement</button>
     </div>
 </div>
 
@@ -163,22 +178,23 @@ const firebaseConfig = {
     measurementId: "G-8QFN8HSTH8"
 };
 try { firebase.initializeApp(firebaseConfig); } catch(e) {}
-
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// --- LOGIQUE ---
+// VARIABLES PRIX
+const PRICES = {
+    'lettre': { carrier: 4.50, fee: 2.00 },
+    'colis_s': { carrier: 8.90, fee: 4.00 },
+    'colis_l': { carrier: 15.90, fee: 6.00 }
+};
+
 auth.onAuthStateChanged(user => {
     if(user) {
         document.getElementById('view-login').style.display = 'none';
         document.getElementById('view-dashboard').style.display = 'block';
         document.getElementById('user-email-display').innerText = user.email;
-        loadMyAddress(user);
+        loadInvoices(user);
         loadLabels(user);
-        loadTracking(user);
-    } else {
-        document.getElementById('view-login').style.display = 'block';
-        document.getElementById('view-dashboard').style.display = 'none';
     }
 });
 
@@ -186,89 +202,96 @@ function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-    if(btn) btn.classList.add('active');
+    btn.classList.add('active');
 }
 
-function updatePrice() {
-    const t = document.getElementById('send-type').value;
-    let p = "4.50 €";
-    if(t.includes("Petit")) p = "12.90 €";
-    if(t.includes("Gros")) p = "29.90 €";
-    document.getElementById('price-display').innerText = p;
+// GESTION DES PRIX
+function updateBreakdown() {
+    const type = document.getElementById('send-type').value;
+    const p = PRICES[type];
+    const total = p.carrier + p.fee;
+    
+    document.getElementById('price-carrier').innerText = p.carrier.toFixed(2) + " €";
+    document.getElementById('price-fee').innerText = p.fee.toFixed(2) + " €";
+    document.getElementById('price-total').innerText = total.toFixed(2) + " €";
 }
 
-// --- ACTIONS ---
-function handleRegister() {
-    const e = document.getElementById('reg-email').value;
-    const p = document.getElementById('reg-pass').value;
-    if(p.length<6) return alert("Mot de passe trop court");
-    auth.createUserWithEmailAndPassword(e, p).catch(err => alert(err.message));
-}
-function handleLogin() {
-    const e = document.getElementById('login-email').value;
-    const p = document.getElementById('login-pass').value;
-    auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
-}
-function saveAddress() {
-    const u = auth.currentUser;
-    if(!u) return;
-    db.collection('users_addresses').doc(u.uid).set({
-        name: document.getElementById('addr-name').value,
-        street: document.getElementById('addr-street').value,
-        city: document.getElementById('addr-city').value
-    }, {merge:true}).then(() => document.getElementById('addr-msg').innerText = "Adresse Sauvegardée !");
-}
-function loadMyAddress(u) {
-    db.collection('users_addresses').doc(u.uid).get().then(doc => {
-        if(doc.exists) {
-            document.getElementById('addr-name').value = doc.data().name || '';
-            document.getElementById('addr-street').value = doc.data().street || '';
-            document.getElementById('addr-city').value = doc.data().city || '';
-        }
-    });
+// GESTION PAIEMENT
+function openSecurePayment() {
+    if(!document.getElementById('send-dest-email').value) return alert("Email destinataire requis");
+    
+    const type = document.getElementById('send-type').value;
+    const total = (PRICES[type].carrier + PRICES[type].fee).toFixed(2);
+    
+    document.getElementById('pay-amount').innerText = total + " €";
+    document.getElementById('pay-ref').innerText = "GB-" + Math.floor(Math.random()*100000);
+    document.getElementById('secure-payment-modal').style.display = 'block';
 }
 
-// --- EXPÉDITION & PDF ---
-function processShipment() {
+function closePayment() {
+    document.getElementById('secure-payment-modal').style.display = 'none';
+}
+
+function confirmPayment() {
+    // C'est ici que se ferait l'appel réel à Stripe
+    const user = auth.currentUser;
     const dest = document.getElementById('send-dest-email').value;
     const type = document.getElementById('send-type').value;
-    const u = auth.currentUser;
-    if(!dest) return alert("Email requis !");
-    
-    const code = "GB-" + Math.floor(100000 + Math.random() * 900000);
-    
+    const p = PRICES[type];
+    const trackCode = document.getElementById('pay-ref').innerText;
+
+    // 1. Créer l'entrée Colis
     db.collection('shipments').add({
-        sender_uid: u.uid,
-        sender_email: u.email,
+        sender_uid: user.uid,
+        sender_email: user.email,
         recipient_email: dest,
         type: type,
-        tracking_code: code,
+        tracking_code: trackCode,
         status: 'paid',
         created_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // 2. Créer la FACTURE (Détaillée)
+    db.collection('invoices').add({
+        user_uid: user.uid,
+        invoice_id: "INV-" + Math.floor(Math.random()*100000),
+        date: new Date().toISOString(),
+        items: [
+            { desc: `Affranchissement ${type}`, amount: p.carrier },
+            { desc: "Frais de Service GhostBox", amount: p.fee }
+        ],
+        total: p.carrier + p.fee,
+        recipient_ref: dest, // On garde l'email, mais sur la facture PDF on peut masquer
+        created_at: firebase.firestore.FieldValue.serverTimestamp()
     }).then(() => {
-        alert("Paiement OK ! Allez dans l'onglet 'Mes Étiquettes'.");
-        switchTab('tab-etiquettes');
+        closePayment();
+        alert("✅ Paiement Validé ! Facture générée.");
+        switchTab('tab-factures', document.querySelectorAll('.nav-link')[1]);
     });
 }
 
-function loadLabels(user) {
-    db.collection('shipments').where('sender_uid', '==', user.uid).orderBy('created_at', 'desc')
+// LISTE DES FACTURES + PDF
+function loadInvoices(user) {
+    db.collection('invoices').where('user_uid', '==', user.uid).orderBy('created_at', 'desc')
       .onSnapshot(snap => {
-          const div = document.getElementById('list-labels');
+          const div = document.getElementById('list-invoices');
           div.innerHTML = '';
-          if(snap.empty) { div.innerHTML = '<p class="text-muted text-center">Aucune étiquette.</p>'; return; }
-          
           snap.forEach(doc => {
               const d = doc.data();
-              // ATTENTION : Ici je passe les arguments 1 par 1 pour éviter les bugs
-              const btnHtml = `<button class="btn btn-gold btn-sm" onclick="generatePDF('${d.tracking_code}', '${d.sender_email}', '${d.recipient_email}', '${d.type}')"><i class="fas fa-file-pdf"></i> PDF</button>`;
+              const date = new Date(d.created_at.seconds * 1000).toLocaleDateString();
               
               div.innerHTML += `
               <div class="col-md-6">
-                  <div class="card p-3 shadow-sm">
+                  <div class="card p-3 shadow-sm border-start border-4 border-warning">
                       <div class="d-flex justify-content-between align-items-center">
-                          <div><strong>${d.tracking_code}</strong><br><small>Vers: ${d.recipient_email}</small></div>
-                          ${btnHtml}
+                          <div>
+                              <strong>Facture ${d.invoice_id}</strong><br>
+                              <small class="text-muted">Du ${date}</small><br>
+                              <span class="text-red fw-bold">${d.total.toFixed(2)} €</span>
+                          </div>
+                          <button class="btn btn-outline-dark btn-sm" onclick='generateInvoicePDF(${JSON.stringify(d)})'>
+                              <i class="fas fa-file-invoice"></i> Télécharger
+                          </button>
                       </div>
                   </div>
               </div>`;
@@ -276,52 +299,72 @@ function loadLabels(user) {
       });
 }
 
-// GENERATION PDF (Corrigée)
-async function generatePDF(code, sender, recipient, type) {
-    if(!window.jspdf) return alert("Erreur: Librairie PDF non chargée. Rafraichissez la page.");
-    
+// GENERATEUR DE FACTURE PDF
+async function generateInvoicePDF(data) {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'landscape', format: 'a6', unit: 'mm' });
+    const doc = new jsPDF();
 
-    doc.setLineWidth(1);
-    doc.rect(2, 2, 144, 101); // Cadre
+    // En-tête
+    doc.setFontSize(20); doc.setTextColor(139, 0, 0);
+    doc.text("GHOSTBOX - FACTURE", 105, 20, null, null, "center");
+    
+    doc.setFontSize(10); doc.setTextColor(0, 0, 0);
+    doc.text("GhostBox Services", 10, 30);
+    doc.text("14 Avenue de l'Anonymat", 10, 35);
+    doc.text("75000 PARIS - FRANCE", 10, 40);
 
+    doc.text("Client Expéditeur : " + auth.currentUser.email, 140, 30);
+    doc.text("N° Facture : " + data.invoice_id, 140, 35);
+    doc.text("Date : " + new Date(data.date).toLocaleDateString(), 140, 40);
+
+    // Ligne
+    doc.setLineWidth(0.5); doc.line(10, 50, 200, 50);
+
+    // Tableau
+    let y = 60;
+    doc.setFont("helvetica", "bold");
+    doc.text("Description", 10, y);
+    doc.text("Montant", 170, y);
+    y += 10;
+    doc.setFont("helvetica", "normal");
+
+    // Items
+    data.items.forEach(item => {
+        doc.text(item.desc, 10, y);
+        doc.text(item.amount.toFixed(2) + " €", 170, y);
+        y += 10;
+    });
+
+    y += 5;
+    doc.line(10, y, 200, y);
+    y += 10;
+
+    // Total
     doc.setFontSize(14); doc.setFont("helvetica", "bold");
-    doc.text("GHOSTBOX RELAIS", 74, 12, null, null, "center");
-    
-    doc.setLineWidth(8);
-    doc.line(10, 22, 138, 22); // Faux code barre
-    doc.setFontSize(10); doc.setFont("courier", "bold");
-    doc.text(code, 74, 30, null, null, "center");
+    doc.text("TOTAL PAYÉ TTC :", 120, y);
+    doc.text(data.total.toFixed(2) + " €", 170, y);
 
-    doc.setFont("helvetica", "normal"); doc.setFontSize(9);
-    doc.text("EXP: " + sender, 5, 45);
-    
-    doc.line(2, 55, 146, 55); // Ligne séparation
+    // Note de confidentialité
+    y += 30;
+    doc.setFontSize(8); doc.setFont("helvetica", "italic"); doc.setTextColor(100);
+    doc.text("Note de confidentialité : Cette facture concerne l'envoi vers le destinataire réf. " + data.recipient_ref, 10, y);
+    doc.text("L'adresse postale du destinataire n'est pas stockée sur ce document pour garantir l'anonymat.", 10, y+5);
 
-    doc.setFontSize(11); doc.setFont("helvetica", "bold");
-    doc.text("DESTINATAIRE (HUB CENTRAL):", 5, 65);
-    doc.setFontSize(10); doc.setFont("helvetica", "normal");
-    doc.text("GHOSTBOX LOGISTICS", 5, 72);
-    doc.text("REF CLIENT: " + recipient, 5, 78);
-    doc.text("100 Rue de l'Anonymat, 75000 PARIS", 5, 84);
-
-    doc.setFontSize(8);
-    doc.text("Type: " + type + " - Affranchi", 140, 98, null, null, "right");
-
-    doc.save("Etiquette_" + code + ".pdf");
+    doc.save(`Facture-${data.invoice_id}.pdf`);
 }
 
-function loadTracking(user) {
+// CHARGEMENT ETIQUETTES SIMPLIFIE
+function loadLabels(user) {
     db.collection('shipments').where('sender_uid', '==', user.uid).onSnapshot(s => {
-        let h = ''; s.forEach(d => h+=`<div class="list-group-item">${d.data().tracking_code} <span class="badge bg-secondary">${d.data().status}</span></div>`);
-        document.getElementById('list-sent').innerHTML = h || "Rien.";
-    });
-    db.collection('shipments').where('recipient_email', '==', user.email).onSnapshot(s => {
-        let h = ''; s.forEach(d => h+=`<div class="list-group-item border-start border-3 border-warning">De: ${d.data().sender_email}<br>${d.data().status}</div>`);
-        document.getElementById('list-received').innerHTML = h || "Rien.";
+        const d = document.getElementById('list-labels'); d.innerHTML = '';
+        s.forEach(doc => {
+             d.innerHTML += `<div class="col-md-4"><div class="card p-3"><small>${doc.data().tracking_code}</small><strong>${doc.data().type}</strong></div></div>`;
+        });
     });
 }
+
+function handleRegister() { auth.createUserWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value).catch(e=>alert(e.message)); }
+function handleLogin() { auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value).catch(e=>alert(e.message)); }
 </script>
 </body>
 </html>
